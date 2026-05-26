@@ -195,20 +195,36 @@ a:hover{ text-decoration: underline; }
 }
 
 .feedbackIcon{
-  width:18px;
-  height:18px;
+  width:20px;
+  height:16px;
   border:2px solid currentColor;
-  border-radius:999px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  border-radius:4px;
+  display:block;
+  position:relative;
 }
 
 .feedbackIcon::before{
-  content:"!";
-  font-size:12px;
-  font-weight:900;
-  line-height:1;
+  content:"";
+  position:absolute;
+  left:3px;
+  bottom:-7px;
+  width:8px;
+  height:8px;
+  border-left:2px solid currentColor;
+  border-bottom:2px solid currentColor;
+  background:var(--base);
+  transform:skew(-22deg);
+}
+
+.feedbackIcon::after{
+  content:"";
+  position:absolute;
+  left:4px;
+  top:4px;
+  width:10px;
+  height:2px;
+  background:currentColor;
+  box-shadow:0 5px 0 currentColor;
 }
 
 .xBtn{
