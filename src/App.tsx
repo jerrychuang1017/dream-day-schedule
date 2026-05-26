@@ -224,7 +224,7 @@ useEffect(() => {
             <div className="feedbackEmailRow">
               <div className="feedbackEmail">{FEEDBACK_EMAIL}</div>
               <button className="copyBtn" onClick={copyFeedbackEmail} aria-label="Copy feedback email" title="Copy email">
-                {feedbackCopied ? "ok" : "copy"}
+                {feedbackCopied ? "ok" : <span className="copyIcon" aria-hidden="true" />}
               </button>
             </div>
           </div>
@@ -255,11 +255,11 @@ useEffect(() => {
             </button>
             <button
               className="iconTextBtn"
-              onClick={() => setFeedbackOpen(true)}
+              onClick={() => setFeedbackOpen((open) => !open)}
               aria-label="Feedback email"
               title="Feedback"
             >
-              @
+              <span className="mailIcon" aria-hidden="true" />
             </button>
             <button className="button danger" onClick={restart}>Restart</button>
           </div>

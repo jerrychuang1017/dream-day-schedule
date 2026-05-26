@@ -183,10 +183,44 @@ a:hover{ text-decoration: underline; }
   line-height:1;
   min-width:24px;
   text-align:center;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .iconTextBtn:hover{
   text-decoration:underline;
+}
+
+.mailIcon{
+  width:18px;
+  height:13px;
+  border:2px solid currentColor;
+  border-radius:2px;
+  position:relative;
+  display:block;
+}
+
+.mailIcon::before,
+.mailIcon::after{
+  content:"";
+  position:absolute;
+  top:2px;
+  width:10px;
+  height:2px;
+  background:currentColor;
+}
+
+.mailIcon::before{
+  left:1px;
+  transform:rotate(32deg);
+  transform-origin:left center;
+}
+
+.mailIcon::after{
+  right:1px;
+  transform:rotate(-32deg);
+  transform-origin:right center;
 }
 
 .xBtn{
@@ -872,11 +906,43 @@ a:hover{ text-decoration: underline; }
   text-transform:uppercase;
   padding:4px 0;
   white-space:nowrap;
+  width:24px;
+  min-width:24px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .copyBtn:hover{
   color:var(--fg);
   text-decoration:underline;
+}
+
+.copyIcon{
+  width:15px;
+  height:15px;
+  position:relative;
+  display:block;
+}
+
+.copyIcon::before,
+.copyIcon::after{
+  content:"";
+  position:absolute;
+  width:10px;
+  height:10px;
+  border:2px solid currentColor;
+  background:var(--base);
+}
+
+.copyIcon::before{
+  left:0;
+  bottom:0;
+}
+
+.copyIcon::after{
+  right:0;
+  top:0;
 }
 
 html[data-theme="dark"] .feedbackModal{
