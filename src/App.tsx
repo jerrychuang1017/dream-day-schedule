@@ -58,6 +58,8 @@ export default function App() {
   const [navOpen, setNavOpen] = useState(false);
   const [forceNamePrompt, setForceNamePrompt] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackStatus, setFeedbackStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
 const updateForStep = (step: StepId, next: AppState | ((prev: AppState) => AppState)) => {
   setState((prev) => {
@@ -77,7 +79,6 @@ const updateForStep = (step: StepId, next: AppState | ((prev: AppState) => AppSt
   const [nameDraft, setNameDraft] = useState<string>(() =>
     state.name && state.name !== "(skip)" ? state.name : ""
   );
-  const [emailDraft, setEmailDraft] = useState<string>(() => state.email || "");
 
   useEffect(() => applyTheme(state.theme), [state.theme]);
 
@@ -112,7 +113,10 @@ useEffect(() => {
   return () => document.removeEventListener("focusin", selectZero);
 }, []);
 
-  const showNameModal = useMemo(() => forceNamePrompt || !state.name, [forceNamePrompt, state.name]);
+  const showNameModal = useMemo(
+    () => forceNamePrompt || (page !== "home" && !state.name),
+    [forceNamePrompt, page, state.name]
+  );
   const displayName = state.name === "(skip)" ? "" : state.name;
 
   function toggleTheme() {
@@ -126,18 +130,43 @@ useEffect(() => {
     setPage("home");
     setNavOpen(false);
     setNameDraft("");
-    setEmailDraft("");
-    setForceNamePrompt(true);
+    setForceNamePrompt(false);
   }
 
   function confirmName() {
     setForceNamePrompt(false);
-    setState((prev) => ({ ...prev, name: nameDraft.trim(), email: emailDraft.trim() }));
+    setState((prev) => ({ ...prev, name: nameDraft.trim() }));
   }
 
   function skipName() {
     setForceNamePrompt(false);
-    setState((prev) => ({ ...prev, name: "(skip)", email: emailDraft.trim() }));
+    setState((prev) => ({ ...prev, name: "(skip)" }));
+  }
+
+  async function submitFeedback() {
+    const message = feedbackText.trim();
+    if (!message || feedbackStatus === "sending") return;
+
+    setFeedbackStatus("sending");
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message,
+          name: displayName || undefined,
+          page,
+          email: state.email || undefined,
+          userAgent: navigator.userAgent,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Feedback failed");
+      setFeedbackStatus("sent");
+      setFeedbackText("");
+    } catch {
+      setFeedbackStatus("error");
+    }
   }
 
   
@@ -158,17 +187,6 @@ useEffect(() => {
                   if (e.key === "Enter") confirmName();
                 }}
                 autoFocus
-              />
-            </div>
-            <div style={{ marginTop: 10 }}>
-              <input
-                className="input"
-                value={emailDraft}
-                placeholder="Email (optional)"
-                onChange={(e) => setEmailDraft(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") confirmName();
-                }}
               />
             </div>
 
@@ -214,10 +232,33 @@ useEffect(() => {
         <div className="modalOverlay">
           <div className="modal feedbackModal">
             <h2 className="modalTitle">Feedback</h2>
-            <div className="modalSub">Send feedback to:</div>
-            <div className="feedbackEmail">jerrychuang1017@gmail.com</div>
+            <div className="modalSub">What should feel better?</div>
+            <textarea
+              className="textarea feedbackTextarea"
+              value={feedbackText}
+              placeholder="Type anything..."
+              onChange={(e) => {
+                setFeedbackText(e.target.value);
+                if (feedbackStatus !== "idle") setFeedbackStatus("idle");
+              }}
+              autoFocus
+            />
+            <div className="feedbackTo">Sends to Jerry</div>
+            {feedbackStatus === "sent" && <div className="noticeOk">Sent. Thank you.</div>}
+            {feedbackStatus === "error" && (
+              <div className="noticeErr">
+                Not sent yet. Email Jerry at jerrychuang1017@gmail.com.
+              </div>
+            )}
             <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-              <button className="button" onClick={() => setFeedbackOpen(false)}>Close</button>
+              <button
+                className="button primary"
+                disabled={!feedbackText.trim() || feedbackStatus === "sending"}
+                onClick={submitFeedback}
+              >
+                {feedbackStatus === "sending" ? "Sending..." : "Submit"}
+              </button>
+              <button className="button" onClick={() => setFeedbackOpen(false)}>Cancel</button>
             </div>
           </div>
         </div>
