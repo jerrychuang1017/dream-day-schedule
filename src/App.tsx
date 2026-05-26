@@ -194,7 +194,11 @@ useEffect(() => {
               {NAV.map((n) => (
                 <button
                   key={n.id}
-                  className={"navItem " + (page === n.id ? "active" : "")}
+                  className={
+                    "navItem " +
+                    (page === n.id ? "active " : "") +
+                    (n.id === "home" || n.id === "all" ? "navItemStrong" : "")
+                  }
                   onClick={() => { setPage(n.id); setNavOpen(false); }}
                 >
                   {n.label}

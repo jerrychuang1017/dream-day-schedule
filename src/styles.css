@@ -648,8 +648,9 @@ a:hover{ text-decoration: underline; }
   font-weight:900 !important;
 }
 
-.drawerFooter .button{
-  font-weight:900 !important;
+.drawerList .navItemStrong{
+  opacity:1;
+  color:var(--fg);
 }
 
 .drawerList .navItem.active{
