@@ -831,20 +831,51 @@ a:hover{ text-decoration: underline; }
 .feedbackModal{
   width:min(560px, calc(100vw - 24px));
   position:relative;
-  padding-top:34px !important;
+  padding:18px 44px 18px 18px !important;
 }
 
 .modalXBtn{
   position:absolute;
-  top:10px;
+  top:18px;
   right:14px;
 }
 
+.feedbackLabel{
+  margin-top:0 !important;
+}
+
+.feedbackEmailRow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:8px;
+}
+
 .feedbackEmail{
-  margin-top:10px;
   font-size:15px;
   font-weight:900;
   overflow-wrap:anywhere;
+  min-width:0;
+  flex:1;
+}
+
+.copyBtn{
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  font-family:var(--font);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  padding:4px 0;
+  white-space:nowrap;
+}
+
+.copyBtn:hover{
+  color:var(--fg);
+  text-decoration:underline;
 }
 
 html[data-theme="dark"] .feedbackModal{

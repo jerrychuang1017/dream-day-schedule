@@ -59,6 +59,7 @@ export default function App() {
   const [navOpen, setNavOpen] = useState(false);
   const [forceNamePrompt, setForceNamePrompt] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackCopied, setFeedbackCopied] = useState(false);
 
 const updateForStep = (step: StepId, next: AppState | ((prev: AppState) => AppState)) => {
   setState((prev) => {
@@ -142,6 +143,16 @@ useEffect(() => {
     setState((prev) => ({ ...prev, name: "(skip)" }));
   }
 
+  async function copyFeedbackEmail() {
+    try {
+      await navigator.clipboard.writeText(FEEDBACK_EMAIL);
+      setFeedbackCopied(true);
+      window.setTimeout(() => setFeedbackCopied(false), 1400);
+    } catch {
+      setFeedbackCopied(false);
+    }
+  }
+
   
   return (
     <div className="container">
@@ -205,8 +216,13 @@ useEffect(() => {
         <div className="modalOverlay">
           <div className="modal feedbackModal">
             <button className="xBtn modalXBtn" onClick={() => setFeedbackOpen(false)} aria-label="Close feedback">x</button>
-            <div className="modalSub">Send feedback to</div>
-            <div className="feedbackEmail">{FEEDBACK_EMAIL}</div>
+            <div className="modalSub feedbackLabel">Send feedback to</div>
+            <div className="feedbackEmailRow">
+              <div className="feedbackEmail">{FEEDBACK_EMAIL}</div>
+              <button className="copyBtn" onClick={copyFeedbackEmail} aria-label="Copy feedback email" title="Copy email">
+                {feedbackCopied ? "ok" : "copy"}
+              </button>
+            </div>
           </div>
         </div>
       )}
