@@ -645,6 +645,11 @@ a:hover{ text-decoration: underline; }
   border-radius: 14px;
   padding: 12px 12px;
   color: var(--fg);
+  font-weight:900 !important;
+}
+
+.drawerFooter .button{
+  font-weight:900 !important;
 }
 
 .drawerList .navItem.active{
