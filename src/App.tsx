@@ -46,6 +46,7 @@ const NAV: Array<{ id: PageId; label: string }> = [
 
 const PAGE_KEY = "project_dream_current_page";
 const PAGE_IDS = NAV.map((n) => n.id);
+const FEEDBACK_EMAIL = "projectdreamdaytoday@gmail.com";
 
 function loadCurrentPage(): PageId {
   const saved = window.localStorage.getItem(PAGE_KEY);
@@ -58,8 +59,6 @@ export default function App() {
   const [navOpen, setNavOpen] = useState(false);
   const [forceNamePrompt, setForceNamePrompt] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [feedbackText, setFeedbackText] = useState("");
-  const [feedbackStatus, setFeedbackStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
 const updateForStep = (step: StepId, next: AppState | ((prev: AppState) => AppState)) => {
   setState((prev) => {
@@ -143,30 +142,10 @@ useEffect(() => {
     setState((prev) => ({ ...prev, name: "(skip)" }));
   }
 
-  async function submitFeedback() {
-    const message = feedbackText.trim();
-    if (!message || feedbackStatus === "sending") return;
-
-    setFeedbackStatus("sending");
-    try {
-      const res = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message,
-          name: displayName || undefined,
-          page,
-          email: state.email || undefined,
-          userAgent: navigator.userAgent,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Feedback failed");
-      setFeedbackStatus("sent");
-      setFeedbackText("");
-    } catch {
-      setFeedbackStatus("error");
-    }
+  function openFeedbackEmail() {
+    const subject = encodeURIComponent("Project Dream Day feedback");
+    const body = encodeURIComponent(`Hi Jerry,\n\nI have feedback about Project Dream Day:\n\n`);
+    window.location.href = `mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`;
   }
 
   
@@ -232,32 +211,10 @@ useEffect(() => {
         <div className="modalOverlay">
           <div className="modal feedbackModal">
             <h2 className="modalTitle">Feedback</h2>
-            <div className="modalSub">What should feel better?</div>
-            <textarea
-              className="textarea feedbackTextarea"
-              value={feedbackText}
-              placeholder="Type anything..."
-              onChange={(e) => {
-                setFeedbackText(e.target.value);
-                if (feedbackStatus !== "idle") setFeedbackStatus("idle");
-              }}
-              autoFocus
-            />
-            <div className="feedbackTo">Sends to Jerry</div>
-            {feedbackStatus === "sent" && <div className="noticeOk">Sent. Thank you.</div>}
-            {feedbackStatus === "error" && (
-              <div className="noticeErr">
-                Not sent yet. Email Jerry at jerrychuang1017@gmail.com.
-              </div>
-            )}
+            <div className="modalSub">Send feedback to:</div>
+            <div className="feedbackEmail">{FEEDBACK_EMAIL}</div>
             <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-              <button
-                className="button primary"
-                disabled={!feedbackText.trim() || feedbackStatus === "sending"}
-                onClick={submitFeedback}
-              >
-                {feedbackStatus === "sending" ? "Sending..." : "Submit"}
-              </button>
+              <button className="button primary" onClick={openFeedbackEmail}>Open email app</button>
               <button className="button" onClick={() => setFeedbackOpen(false)}>Cancel</button>
             </div>
           </div>
@@ -368,7 +325,10 @@ useEffect(() => {
       </div>
       <button
         className="feedbackWidget"
-        onClick={() => setFeedbackOpen(true)}
+        onClick={() => {
+          setFeedbackOpen(true);
+          openFeedbackEmail();
+        }}
         title="Send feedback"
       >
         Feedback

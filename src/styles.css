@@ -816,18 +816,11 @@ html[data-theme="dark"] .feedbackWidget{
   width:min(560px, calc(100vw - 24px));
 }
 
-.feedbackTextarea{
-  margin-top:14px;
-  min-height:170px;
-}
-
-.feedbackTo{
-  margin-top:8px;
-  color:var(--muted);
-  font-size:11px;
+.feedbackEmail{
+  margin-top:10px;
+  font-size:15px;
   font-weight:900;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
+  overflow-wrap:anywhere;
 }
 
 html[data-theme="dark"] .feedbackModal{
@@ -838,15 +831,6 @@ html[data-theme="dark"] .feedbackModal{
 
 html[data-theme="dark"] .feedbackModal .modalTitle{
   color:#e5e7eb !important;
-}
-
-html[data-theme="dark"] .feedbackModal .textarea{
-  color:#e5e7eb !important;
-  border-bottom-color:rgba(226,232,240,0.35) !important;
-}
-
-html[data-theme="dark"] .feedbackModal .textarea::placeholder{
-  color:rgba(226,232,240,0.68) !important;
 }
 
 html[data-theme="dark"] .feedbackModal .button{
