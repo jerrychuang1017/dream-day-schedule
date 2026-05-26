@@ -1,282 +1,153 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import html2canvas from "html2canvas";
-import type { TimeBlock, TodayData } from "./types";
-import { clearName, clearToday, getName, loadToday, saveToday, setName } from "./storage";
-import {
-  blockRelRange,
-  overlaps,
-  oneLine,
-  prettyTime,
-  relMinutes,
-  sleepRelMinutes,
-  sortByStart,
-  uid,
-  minutesToHHMM,
-} from "./time";
-import TimeField from "./TimeField";
+import type { AppState, StepId } from "./types";
+import { applyTheme, blankState, clearAll, ensureTodaySchedule, loadState, saveState } from "./storage";
 
-type Validation = { ok: true } | { ok: false; message: string };
+import Landing from "./pages/Landing";
+import DailySchedule from "./pages/DailySchedule";
+import PeopleRelationship from "./pages/PeopleRelationship";
+import Top10MustDo from "./pages/Top10MustDo";
+import GoalsPage from "./pages/Goals";
+import FavoriteCity from "./pages/FavoriteCity";
+import Places from "./pages/Places";
+import Food from "./pages/Food";
+import DreamHouse from "./pages/DreamHouse";
+import Finance from "./pages/Finance";
+import HealthFitness from "./pages/HealthFitness";
+import AllSummary from "./pages/AllSummary";
 
-function validate(data: TodayData): Validation {
-  const sleepRel = sleepRelMinutes(data.wakeTime, data.sleepTime);
-  if (!Number.isFinite(sleepRel)) return { ok: false, message: "Invalid Wake/Sleep time." };
+type PageId =
+  | "home"
+  | "schedule"
+  | "people"
+  | "top10"
+  | "goals"
+  | "cities"
+  | "places"
+  | "food"
+  | "dreamhouse"
+  | "finance"
+  | "health"
+  | "all";
 
-  const blocks = sortByStart(data.blocks);
+const NAV: Array<{ id: PageId; label: string }> = [
+  { id: "home", label: "Home" },
+  { id: "schedule", label: "Dream Day Schedule" },
+  { id: "people", label: "People relationship" },
+  { id: "top10", label: "Top 10 must do" },
+  { id: "goals", label: "Goals (1/3/5)" },
+  { id: "cities", label: "Favorite city" },
+  { id: "places", label: "Places" },
+  { id: "food", label: "Top 5 restaurants" },
+  { id: "dreamhouse", label: "Dream house" },
+  { id: "finance", label: "FIRE" },
+  { id: "health", label: "Health & fitness" },
+  { id: "all", label: "All" },
+];
 
-  for (const b of blocks) {
-    const { rs, re } = blockRelRange(b.start, b.end, data.wakeTime);
-    if (!Number.isFinite(rs) || !Number.isFinite(re)) return { ok: false, message: "Invalid block time." };
-    if (rs >= re) return { ok: false, message: `Invalid block: ${b.start} - ${b.end}.` };  }
+const PAGE_KEY = "project_dream_current_page";
+const PAGE_IDS = NAV.map((n) => n.id);
 
-  for (let i = 0; i < blocks.length; i++) {
-    const a = blocks[i];
-    const A = blockRelRange(a.start, a.end, data.wakeTime);
-    for (let j = i + 1; j < blocks.length; j++) {
-      const b = blocks[j];
-      const B = blockRelRange(b.start, b.end, data.wakeTime);
-      if (overlaps(A.rs, A.re, B.rs, B.re)) {
-        return { ok: false, message: `Blocks overlap: ${a.start}-${a.end} vs ${b.start}-${b.end}` };
-      }
-    }
-  }
-
-  return { ok: true };
-}
-
-function buildTitle(name: string): string {
-  const n = name.trim();
-  return n ? `${n}'s Dream Day Schedule` : "Dream Day Schedule";
-}
-
-function defaultEnd(start: string, wake: string, sleep: string): string {
-  const startRel = relMinutes(start, wake);
-  const sleepRel = sleepRelMinutes(wake, sleep);
-  let endRel = startRel + 60; // 1 hour
-  if (Number.isFinite(sleepRel)) endRel = Math.min(endRel, sleepRel);
-  return minutesToHHMM(endRel);
+function loadCurrentPage(): PageId {
+  const saved = window.localStorage.getItem(PAGE_KEY);
+  return PAGE_IDS.includes(saved as PageId) ? (saved as PageId) : "home";
 }
 
 export default function App() {
-  const wallpaperRef = useRef<HTMLDivElement | null>(null);
-  const autosaveTimer = useRef<number | null>(null);
+  const [state, setState] = useState<AppState>(() => ensureTodaySchedule(loadState()));
+  const [page, setPage] = useState<PageId>(() => loadCurrentPage());
+  const [navOpen, setNavOpen] = useState(false);
+  const [forceNamePrompt, setForceNamePrompt] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
-  const [name, setNameState] = useState<string>(() => getName());
-  const [nameDraft, setNameDraft] = useState<string>(() => getName());
-  const [data, setData] = useState<TodayData>(() => ({ wakeTime: "08:00", sleepTime: "23:00", blocks: [] }));
-  const [status, setStatus] = useState<null | { kind: "err"; text: string }>(null);
-  const [exporting, setExporting] = useState(false);
-const [theme, setTheme] = useState<"dark" | "light">(() => {
-  const t = localStorage.getItem("dreamday_theme_v1");
-  return t === "light" ? "light" : "dark";
-});
+const updateForStep = (step: StepId, next: AppState | ((prev: AppState) => AppState)) => {
+  setState((prev) => {
+    const ns: AppState = typeof next === "function" ? (next as any)(prev) : next;
+    return {
+      ...ns,
+      updatedAt: {
+        ...(ns.updatedAt ?? {}),
+        [step]: new Date().toISOString(),
+      },
+    };
+  });
+};
 
+    const contentRef = useRef<HTMLDivElement | null>(null);
+
+  const [nameDraft, setNameDraft] = useState<string>(() =>
+    state.name && state.name !== "(skip)" ? state.name : ""
+  );
+  const [emailDraft, setEmailDraft] = useState<string>(() => state.email || "");
+
+  useEffect(() => applyTheme(state.theme), [state.theme]);
 
   useEffect(() => {
-    setData(loadToday());
-  }, []);
+    const t = window.setTimeout(() => saveState(state), 250);
+    return () => window.clearTimeout(t);
+  }, [state]);
 
-  useEffect(() => {
-    document.title = buildTitle(name);
-  }, [name]);
+
 useEffect(() => {
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem("dreamday_theme_v1", theme);
-}, [theme]);
+  // Always jump to top when navigating between pages
+  window.localStorage.setItem(PAGE_KEY, page);
+  if (contentRef.current) contentRef.current.scrollTop = 0;
+  window.scrollTo({ top: 0, left: 0, behavior: "instant" as any });
+}, [page]);
 
 
-  const sortedBlocks = useMemo(() => sortByStart(data.blocks), [data.blocks]);
+useEffect(() => {
+  const fn = () => setPage("all");
+  window.addEventListener("projectdream:goAll", fn as any);
+  return () => window.removeEventListener("projectdream:goAll", fn as any);
+}, []);
 
-  const updatedLabel = useMemo(() => {
-    const iso = data.lastSavedAt;
-    if (!iso) return "";
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return "";
-    return `Updated at ${prettyTime(d)}`;
-  }, [data.lastSavedAt]);
-
-
-const sleepRel = useMemo(() => sleepRelMinutes(data.wakeTime, data.sleepTime), [data.wakeTime, data.sleepTime]);
-
-const canAddMore = useMemo(() => {
-  if (!Number.isFinite(sleepRel)) return false;
-  if (sortedBlocks.length === 0) return relMinutes(data.wakeTime, data.wakeTime) < sleepRel;
-  const last = sortedBlocks[sortedBlocks.length - 1];
-  const lastEndRel = relMinutes(last.end, data.wakeTime);
-  const lastEndRelAdj = lastEndRel < relMinutes(data.wakeTime, data.wakeTime) ? lastEndRel + 1440 : lastEndRel;
-  return lastEndRelAdj < sleepRel;
-}, [sleepRel, sortedBlocks, data.wakeTime]);
-
-const finished = useMemo(() => {
-  if (!Number.isFinite(sleepRel)) return false;
-  if (sortedBlocks.length === 0) return false;
-  const last = sortedBlocks[sortedBlocks.length - 1];
-  const lastEnd = relMinutes(last.end, data.wakeTime);
-  const wakeRel = relMinutes(data.wakeTime, data.wakeTime);
-  const lastEndAdj = lastEnd < wakeRel ? lastEnd + 1440 : lastEnd;
-  return lastEndAdj >= sleepRel;
-}, [sleepRel, sortedBlocks, data.wakeTime]);
-
-  useEffect(() => {
-    if (!name.trim()) return;
-    if (autosaveTimer.current) window.clearTimeout(autosaveTimer.current);
-
-    autosaveTimer.current = window.setTimeout(() => {
-      const v = validate({ ...data, blocks: sortedBlocks });
-    if (!v.ok) { setStatus({ kind: "err", text: v.message }); return; }
-      setStatus(null);
-      const nowIso = new Date().toISOString();
-      const next: TodayData = { ...data, blocks: sortedBlocks, lastSavedAt: nowIso };
-      setData(next);
-      saveToday(next);
-    }, 450);
-
-    return () => {
-      if (autosaveTimer.current) window.clearTimeout(autosaveTimer.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.wakeTime, data.sleepTime, data.blocks, name]);
-
-  function updateBlock(id: string, patch: Partial<TimeBlock>) {
-    setData((prev) => ({
-      ...prev,
-      blocks: prev.blocks.map((b) => (b.id === id ? { ...b, ...patch } : b)),
-    }));
-  }
-
-  function chainUpdateNextStart(changedId: string, newEnd: string) {
-    const blocks = sortByStart(data.blocks);
-    const idx = blocks.findIndex((b) => b.id === changedId);
-    if (idx === -1) return;
-
-    const next = blocks[idx + 1];
-    if (!next) {
-      updateBlock(changedId, { end: newEnd });
-      return;
+useEffect(() => {
+  const selectZero = (event: FocusEvent) => {
+    const input = event.target as HTMLInputElement | null;
+    if (input?.tagName === "INPUT" && input.type === "number" && input.value === "0") {
+      window.setTimeout(() => input.select(), 0);
     }
+  };
+  document.addEventListener("focusin", selectZero);
+  return () => document.removeEventListener("focusin", selectZero);
+}, []);
 
-    const nextStart = newEnd;
-    const nextRange = blockRelRange(nextStart, next.end, data.wakeTime);
-    let nextEnd = next.end;
-    if (!Number.isFinite(nextRange.re) || nextRange.re <= nextRange.rs) {
-      nextEnd = defaultEnd(nextStart, data.wakeTime, data.sleepTime);
-    }
+  const showNameModal = useMemo(() => forceNamePrompt || !state.name, [forceNamePrompt, state.name]);
+  const displayName = state.name === "(skip)" ? "" : state.name;
 
-    setData((prev) => ({
-      ...prev,
-      blocks: prev.blocks.map((b) => {
-        if (b.id === changedId) return { ...b, end: newEnd };
-        if (b.id === next.id) return { ...b, start: nextStart, end: nextEnd };
-        return b;
-      }),
-    }));
+  function toggleTheme() {
+    setState((prev) => ({ ...prev, theme: prev.theme === "dark" ? "light" : "dark" }));
   }
 
-  function focusActivity(id: string) {
-    setTimeout(() => {
-      const el = document.querySelector(`[data-activity="${id}"]`) as HTMLTextAreaElement | null;
-      el?.focus();
-    }, 0);
-  }
-
-  function addBlock() {    const v = validate({ ...data, blocks: sortedBlocks });
-    if (!v.ok) { setStatus({ kind: "err", text: v.message }); return; }
-
-    const last = sortedBlocks.length > 0 ? sortedBlocks[sortedBlocks.length - 1] : null;
-    const start = last ? last.end : data.wakeTime;
-
-    const b: TimeBlock = {
-      id: uid(),
-      start,
-      end: defaultEnd(start, data.wakeTime, data.sleepTime),
-      activity: "",
-      withWho: "",
-    };
-
-    setData((prev) => ({ ...prev, blocks: [...prev.blocks, b] }));
-    setStatus(null);
-    focusActivity(b.id);
-  }
-
-  function addFirstBlock() {
-    const b: TimeBlock = {
-      id: uid(),
-      start: data.wakeTime,
-      end: defaultEnd(data.wakeTime, data.wakeTime, data.sleepTime),
-      activity: "",
-      withWho: "",
-    };
-    setData((prev) => ({ ...prev, blocks: [...prev.blocks, b] }));
-    setStatus(null);
-    focusActivity(b.id);
-  }
-
-  function onAddBlock() {
-  if (!canAddMore) return;
-  if (sortedBlocks.length === 0) addFirstBlock();
-  else addBlock();
-}
-
-  function removeBlock(id: string) {
-    setData((prev) => ({ ...prev, blocks: prev.blocks.filter((b) => b.id !== id) }));
-    setStatus(null);
-  }
-
-  function onClear() {
-    clearToday();
-    setData({ wakeTime: "08:00", sleepTime: "23:00", blocks: [] });
-    setStatus(null);  }
-
-  function onRestart() {
-    onClear();
-    clearName();
-    setNameState("");
+  function restart() {
+    clearAll();
+    const fresh = ensureTodaySchedule(blankState());
+    setState({ ...fresh, name: "" });
+    setPage("home");
+    setNavOpen(false);
     setNameDraft("");
-  }
-
-  async function exportWallpaperJPEG() {
-    if (!wallpaperRef.current) return;
-    try {
-      setExporting(true);
-      await new Promise((r) => requestAnimationFrame(() => r(null)));
-      const canvas = await html2canvas(wallpaperRef.current, {
-        backgroundColor: theme === "dark" ? "#000000" : "#ffffff",
-        scale: 2,
-        useCORS: true,
-      });
-      const jpegDataUrl = canvas.toDataURL("image/jpeg", 0.95);
-      const a = document.createElement("a");
-      a.href = jpegDataUrl;
-      a.download = `${buildTitle(name).replace(/\s+/g, "_")}_wallpaper.jpg`;
-      a.click();
-    } finally {
-      setExporting(false);
-    }
+    setEmailDraft("");
+    setForceNamePrompt(true);
   }
 
   function confirmName() {
-    const n = nameDraft.trim();
-    if (!n) return;
-    setName(n);
-    setNameState(n);
+    setForceNamePrompt(false);
+    setState((prev) => ({ ...prev, name: nameDraft.trim(), email: emailDraft.trim() }));
   }
 
-  const showNameModal = !name.trim();
+  function skipName() {
+    setForceNamePrompt(false);
+    setState((prev) => ({ ...prev, name: "(skip)", email: emailDraft.trim() }));
+  }
 
-  const wallpaperLines = useMemo(() => {
-    return sortedBlocks.map((b) => {
-      const act = oneLine(b.activity);
-      const who = oneLine(b.withWho);
-      return { time: `${b.start}–${b.end}`, text: act, withWho: who };
-    });
-  }, [sortedBlocks]);
-
+  
   return (
     <div className="container">
       {showNameModal && (
         <div className="modalOverlay">
           <div className="modal">
             <h2 className="modalTitle">What’s your name?</h2>
-            <div className="modalSub">We’ll personalize the title for you.</div>
+
             <div style={{ marginTop: 10 }}>
               <input
                 className="input"
@@ -289,157 +160,178 @@ const finished = useMemo(() => {
                 autoFocus
               />
             </div>
-            <div className="btnRow" style={{ marginTop: 10 }}>
-              <button className="button primary" onClick={confirmName} disabled={!nameDraft.trim()}>
-                Continue
+            <div style={{ marginTop: 10 }}>
+              <input
+                className="input"
+                value={emailDraft}
+                placeholder="Email (optional)"
+                onChange={(e) => setEmailDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") confirmName();
+                }}
+              />
+            </div>
+
+            <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+              <button className="button primary" onClick={confirmName}>Continue</button>
+              <button className="button" onClick={skipName}>Skip</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {navOpen && (
+        <>
+          <div className="drawerOverlay" onClick={() => setNavOpen(false)} />
+          <div className="drawer">
+            <div className="drawerHeader">
+              <button className="smallBtn" onClick={() => setNavOpen(false)}>Close</button>
+            </div>
+
+            <div className="drawerList">
+              {NAV.map((n) => (
+                <button
+                  key={n.id}
+                  className={"navItem " + (page === n.id ? "active" : "")}
+                  onClick={() => { setPage(n.id); setNavOpen(false); }}
+                >
+                  {n.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="drawerFooter">
+              <button className="button" onClick={toggleTheme}>
+                {state.theme === "dark" ? "Light" : "Dark"}
               </button>
+              <button className="button danger" onClick={restart}>Restart</button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {feedbackOpen && (
+        <div className="modalOverlay">
+          <div className="modal feedbackModal">
+            <h2 className="modalTitle">Feedback</h2>
+            <div className="modalSub">Send feedback to:</div>
+            <div className="feedbackEmail">jerrychuang1017@gmail.com</div>
+            <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+              <button className="button" onClick={() => setFeedbackOpen(false)}>Close</button>
             </div>
           </div>
         </div>
       )}
 
       <div className="shell">
-        <div className="body">
-          <div className="header">
-            <div className="titleWrap">
-              <h1 className="h1">{buildTitle(name)}</h1>
-              <div className="sub">Your desired day{updatedLabel ? ` · ${updatedLabel}` : ""}</div>
-            
-<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-  <button
-    className="button"
-    onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-    title="Toggle theme"
-  >
-    {theme === "dark" ? "Light" : "Dark"}
-  </button>
-</div>
-</div>
-          </div>
-
-          <div className="grid2">
-            <div>
-              <div className="label">Wake</div>
-              <TimeField value24={data.wakeTime} onChange24={(v) => setData((p) => ({ ...p, wakeTime: v }))} />
-            </div>
-            <div>
-              <div className="label">Sleep</div>
-              <TimeField value24={data.sleepTime} onChange24={(v) => setData((p) => ({ ...p, sleepTime: v }))} />
-            </div>
-          </div>
-
-          <div className="btnRow">
-            <button className="button" onClick={onAddBlock} disabled={!canAddMore}>+ Add block</button>
-            <button className="button primary" onClick={exportWallpaperJPEG} disabled={exporting}>
-              {exporting ? "Exporting…" : "Export (JPEG)"}
-            </button>
-            <button className="button danger" onClick={onClear}>Clear</button>
-            <button className="button" onClick={onRestart}>Restart</button>
-          
-
-{finished && (
-  <div className="notice" style={{ borderColor: "rgba(34,197,94,0.35)", color: "rgba(34,197,94,0.95)" }}>
-    ✓ Finish.
-  </div>
-)}
-</div>
-
-          {status?.kind === "err" && <div className="notice err">! {status.text}</div>}
-
-          <div className="hr" />
-
-          <div className="blocksTitle">Blocks</div>
-
-          {sortedBlocks.length === 0 ? (
-            <div className="notice">No blocks yet.</div>
-          ) : (
-            <div>
-              {sortedBlocks.map((b) => (
-                <div className="block" key={b.id}>
-                  <div className="blockTop">
-                    <div className="badge">
-                      <span>{b.start}–{b.end}</span>
-                      <span className="meta">{b.withWho.trim() ? `with: ${b.withWho.trim()}` : "solo"}</span>
-                    </div>
-                    <button className="button danger" onClick={() => removeBlock(b.id)}>Delete</button>
-                  </div>
-
-                  <div className="row3">
-                    <div>
-                      <div className="label">Start</div>
-                      <TimeField
-                        value24={b.start}
-                        onChange24={(val) => {
-                          updateBlock(b.id, { start: val });
-                          const r = blockRelRange(val, b.end, data.wakeTime);
-                          if (!Number.isFinite(r.re) || r.re <= r.rs) {
-                            const newEnd = defaultEnd(val, data.wakeTime, data.sleepTime);
-                            chainUpdateNextStart(b.id, newEnd);
-                          }
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <div className="label">End</div>
-                      <TimeField value24={b.end} onChange24={(val) => chainUpdateNextStart(b.id, val)} />
-                    </div>
-                    <div>
-                      <div className="label">With</div>
-                      <input
-                        className="input"
-                        value={b.withWho}
-                        placeholder="Family / friends / coworkers…"
-                        onChange={(e) => updateBlock(b.id, { withWho: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  <div style={{ marginTop: 8 }}>
-                    <div className="label">Activity</div>
-                    <textarea
-                      className="textarea"
-                      data-activity={b.id}
-                      value={b.activity}
-                      placeholder="Deep work / meeting / workout / family time…"
-                      onChange={(e) => updateBlock(b.id, { activity: e.target.value })}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          onAddBlock();
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="wallpaperWrap" ref={wallpaperRef} aria-hidden="true">
-        <div className="wpCard">
-          <div className="wpTitle">{buildTitle(name)}</div>
-          <div className="wpSub">Your desired day{updatedLabel ? ` · ${updatedLabel}` : ""}</div>
-          <div className="wpLine" />
-          {wallpaperLines.length === 0 ? (
-            <div className="wpItem">
-              <div className="wpTime">—</div>
-              <div className="wpAct">No blocks yet.</div>
-            </div>
-          ) : (
-            wallpaperLines.map((x, i) => (
-              <div className="wpItem" key={i}>
-                <div className="wpTime">{x.time}</div>
-                <div className="wpAct">
-                  {x.text || "—"}
-                  {x.withWho ? <span className="wpWith"> · {x.withWho}</span> : null}
-                </div>
+        <div className="header">
+          <div className="brand">
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <div className="iconBtn" onClick={() => { setPage("home"); setNavOpen(false); }} title="Home">
+                ⌂
               </div>
-            ))
-          )}
+              <div className="iconBtn" onClick={() => setNavOpen((v) => !v)} title="Menu">
+                ≡
+              </div>
+            </div>
+          </div>
+
+          <div className="headerRight">
+            <button className="button" onClick={toggleTheme}>
+              {state.theme === "dark" ? "Light" : "Dark"}
+            </button>
+            <button className="button danger" onClick={restart}>Restart</button>
+          </div>
+        </div>
+
+        <div className="layout">
+          <div className="nav" />
+          <div className="content" ref={contentRef}>
+            {page === "home" && (
+              <Landing state={state} />
+            )}
+
+            {page === "schedule" && (
+              <DailySchedule
+                state={state}
+                setState={(s) => updateForStep("schedule", s)}
+              />
+            )}
+
+            {page === "people" && (
+              <PeopleRelationship
+                state={state}
+                setState={(s) => updateForStep("people", s)}
+              />
+            )}
+
+            {page === "top10" && (
+              <Top10MustDo
+                state={state}
+                setState={(s) => updateForStep("top10", s)}
+              />
+            )}
+
+            {page === "goals" && (
+              <GoalsPage
+                state={state}
+                setState={(s) => updateForStep("goals", s)}
+              />
+            )}
+
+            {page === "cities" && (
+              <FavoriteCity
+                state={state}
+                setState={(s) => updateForStep("cities", s)}
+              />
+            )}
+
+            {page === "places" && (
+              <Places
+                state={state}
+                setState={(s) => updateForStep("places", s)}
+              />
+            )}
+
+            {page === "food" && (
+              <Food
+                state={state}
+                setState={(s) => updateForStep("food", s)}
+              />
+            )}
+
+            {page === "dreamhouse" && (
+              <DreamHouse
+                state={state}
+                setState={(s) => updateForStep("dreamhouse", s)}
+              />
+            )}
+
+            {page === "finance" && (
+              <Finance
+                state={state}
+                setState={(s) => updateForStep("finance", s)}
+              />
+            )}
+
+            {page === "health" && (
+              <HealthFitness
+                state={state}
+                setState={(s) => updateForStep("health", s)}
+              />
+            )}
+
+            {page === "all" && <AllSummary state={state} />}
+          </div>
         </div>
       </div>
+      <button
+        className="feedbackWidget"
+        onClick={() => setFeedbackOpen(true)}
+        title="Send feedback"
+      >
+        Feedback
+      </button>
     </div>
   );
 }
