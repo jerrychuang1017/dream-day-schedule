@@ -120,6 +120,8 @@ a:hover{ text-decoration: underline; }
   cursor:pointer;
   user-select:none;
   font-weight: 900;
+  color:var(--fg) !important;
+  opacity:1 !important;
 }
 
 .iconBtn:hover{ border-color: rgba(var(--accent-rgb),0.35); }
@@ -177,6 +179,7 @@ a:hover{ text-decoration: underline; }
   border:none;
   background:transparent;
   color:var(--fg) !important;
+  opacity:1 !important;
   padding:6px 0;
   cursor:pointer;
   font-family:var(--font);
