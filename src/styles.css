@@ -195,8 +195,8 @@ a:hover{ text-decoration: underline; }
 }
 
 .feedbackIcon{
-  width:18px;
-  height:14px;
+  width:21px;
+  height:16px;
   border:2px solid currentColor;
   border-radius:3px;
   display:block;
@@ -207,13 +207,24 @@ a:hover{ text-decoration: underline; }
   content:"";
   position:absolute;
   left:3px;
-  bottom:-6px;
-  width:7px;
-  height:7px;
+  bottom:-7px;
+  width:8px;
+  height:8px;
   border-left:2px solid currentColor;
   border-bottom:2px solid currentColor;
   background:var(--base);
   transform:skew(-22deg);
+}
+
+.feedbackIcon::after{
+  content:"";
+  position:absolute;
+  left:4px;
+  top:4px;
+  width:11px;
+  height:2px;
+  background:currentColor;
+  box-shadow:0 5px 0 currentColor;
 }
 
 .xBtn{
