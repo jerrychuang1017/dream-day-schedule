@@ -43,7 +43,7 @@ export default function Finance({ state, setState }: Props) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
           <div>
             <div className="h1" style={{ fontSize: 13, marginBottom: 6 }}>{name ? `${name}'s FIRE planning` : 'FIRE planning'}</div>
-            <div className="sub">Simple planning. No accounts connected.</div>
+            <div className="sub">Assumes your current net worth is invested, and monthly invest is additional money you add each month.</div>
             {state.updatedAt?.finance ? <div className="sub">Updated {formatUpdatedAt(state.updatedAt.finance)}</div> : null}
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function Finance({ state, setState }: Props) {
         <div className="card" style={{ background: "transparent" }}>
           <div className="label">Estimated time to FIRE</div>
           <div style={{ fontWeight: 900, fontSize: 14 }}>{years === null ? "—" : `${years.toFixed(1)} years`}</div>
-          <div className="sub" style={{ marginTop: 6 }}>Simple monthly simulation. Not financial advice.</div>
+          <div className="sub" style={{ marginTop: 6 }}>Simple monthly simulation based on those assumptions. Not financial advice.</div>
         </div>
 
         <div style={{ marginTop: 10 }}>
