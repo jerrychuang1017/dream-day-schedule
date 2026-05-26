@@ -195,36 +195,20 @@ a:hover{ text-decoration: underline; }
 }
 
 .feedbackIcon{
-  display:block;
   width:18px;
-  height:14px;
+  height:18px;
   border:2px solid currentColor;
-  border-radius:4px;
-  position:relative;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .feedbackIcon::before{
-  content:"";
-  position:absolute;
-  left:4px;
-  bottom:-6px;
-  width:7px;
-  height:7px;
-  border-left:2px solid currentColor;
-  border-bottom:2px solid currentColor;
-  background:var(--base);
-  transform:skew(-18deg);
-}
-
-.feedbackIcon::after{
-  content:"";
-  position:absolute;
-  left:4px;
-  top:5px;
-  width:7px;
-  height:2px;
-  background:currentColor;
-  box-shadow:5px 0 0 currentColor;
+  content:"!";
+  font-size:12px;
+  font-weight:900;
+  line-height:1;
 }
 
 .xBtn{
@@ -851,6 +835,26 @@ a:hover{ text-decoration: underline; }
   letter-spacing:0.14em;
   line-height:1.45;
   text-transform:uppercase;
+}
+
+.doubleStrike{
+  position:relative;
+  display:inline-block;
+}
+
+.doubleStrike::before,
+.doubleStrike::after{
+  content:"";
+  position:absolute;
+  left:-0.12em;
+  right:-0.12em;
+  height:2px;
+  background:#ef4444;
+  top:44%;
+}
+
+.doubleStrike::after{
+  top:58%;
 }
 
 .homeDivider{

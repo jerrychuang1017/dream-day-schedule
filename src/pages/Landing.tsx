@@ -13,8 +13,8 @@ export default function Landing({ state }: Props) {
           Project Dream Day
         </div>
         <div className="homeTagline">
-          <div><s>Burn out</s></div>
-          <div><s>Layoff</s></div>
+          <div><span className="doubleStrike">Burn out</span></div>
+          <div><span className="doubleStrike">Layoff</span></div>
         </div>
         <div className="hr homeDivider" />
         <div className="homeVision">
