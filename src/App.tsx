@@ -195,7 +195,6 @@ useEffect(() => {
               <button className="button" onClick={toggleTheme}>
                 {state.theme === "dark" ? "Light" : "Dark"}
               </button>
-              <button className="button" onClick={() => setFeedbackOpen(true)}>Feedback</button>
               <button className="button danger" onClick={restart}>Restart</button>
             </div>
           </div>
@@ -228,10 +227,22 @@ useEffect(() => {
           </div>
 
           <div className="headerRight">
-            <button className="button" onClick={toggleTheme}>
-              {state.theme === "dark" ? "Light" : "Dark"}
+            <button
+              className="iconTextBtn"
+              onClick={toggleTheme}
+              aria-label={state.theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              title={state.theme === "dark" ? "Light mode" : "Dark mode"}
+            >
+              {state.theme === "dark" ? "○" : "●"}
             </button>
-            <button className="button" onClick={() => setFeedbackOpen(true)}>Feedback</button>
+            <button
+              className="iconTextBtn"
+              onClick={() => setFeedbackOpen(true)}
+              aria-label="Feedback email"
+              title="Feedback"
+            >
+              @
+            </button>
             <button className="button danger" onClick={restart}>Restart</button>
           </div>
         </div>

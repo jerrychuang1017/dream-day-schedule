@@ -171,6 +171,24 @@ a:hover{ text-decoration: underline; }
 .button:hover{border-color: rgba(148,163,184,0.38)}
 .button:disabled{opacity:.45;cursor:not-allowed}
 
+.iconTextBtn{
+  border:none;
+  background:transparent;
+  color:var(--fg);
+  padding:6px 0;
+  cursor:pointer;
+  font-family:var(--font);
+  font-size:16px;
+  font-weight:900;
+  line-height:1;
+  min-width:24px;
+  text-align:center;
+}
+
+.iconTextBtn:hover{
+  text-decoration:underline;
+}
+
 .button.primary{
   border-color: rgba(var(--accent-rgb),0.40);
   color: var(--primaryText);
