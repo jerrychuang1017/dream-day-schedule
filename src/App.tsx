@@ -142,12 +142,6 @@ useEffect(() => {
     setState((prev) => ({ ...prev, name: "(skip)" }));
   }
 
-  function openFeedbackEmail() {
-    const subject = encodeURIComponent("Project Dream Day feedback");
-    const body = encodeURIComponent(`Hi Jerry,\n\nI have feedback about Project Dream Day:\n\n`);
-    window.location.href = `mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`;
-  }
-
   
   return (
     <div className="container">
@@ -211,10 +205,9 @@ useEffect(() => {
         <div className="modalOverlay">
           <div className="modal feedbackModal">
             <h2 className="modalTitle">Feedback</h2>
-            <div className="modalSub">Send feedback to:</div>
+            <div className="modalSub">Send feedback to</div>
             <div className="feedbackEmail">{FEEDBACK_EMAIL}</div>
             <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-              <button className="button primary" onClick={openFeedbackEmail}>Open email app</button>
               <button className="button" onClick={() => setFeedbackOpen(false)}>Cancel</button>
             </div>
           </div>
@@ -325,10 +318,7 @@ useEffect(() => {
       </div>
       <button
         className="feedbackWidget"
-        onClick={() => {
-          setFeedbackOpen(true);
-          openFeedbackEmail();
-        }}
+        onClick={() => setFeedbackOpen(true)}
         title="Send feedback"
       >
         Feedback
