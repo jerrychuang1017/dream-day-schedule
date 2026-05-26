@@ -189,6 +189,24 @@ a:hover{ text-decoration: underline; }
   text-decoration:underline;
 }
 
+.xBtn{
+  border:none;
+  background:transparent;
+  color:var(--fg);
+  cursor:pointer;
+  font-family:var(--font);
+  font-size:18px;
+  font-weight:900;
+  line-height:1;
+  padding:4px 0;
+  width:24px;
+  text-align:center;
+}
+
+.xBtn:hover{
+  text-decoration:underline;
+}
+
 .button.primary{
   border-color: rgba(var(--accent-rgb),0.40);
   color: var(--primaryText);
@@ -600,7 +618,7 @@ a:hover{ text-decoration: underline; }
 .drawerHeader{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:flex-end;
   gap: 8px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border);
@@ -807,6 +825,14 @@ a:hover{ text-decoration: underline; }
 
 .feedbackModal{
   width:min(560px, calc(100vw - 24px));
+  position:relative;
+  padding-top:34px !important;
+}
+
+.modalXBtn{
+  position:absolute;
+  top:10px;
+  right:14px;
 }
 
 .feedbackEmail{

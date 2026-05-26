@@ -176,7 +176,7 @@ useEffect(() => {
           <div className="drawerOverlay" onClick={() => setNavOpen(false)} />
           <div className="drawer">
             <div className="drawerHeader">
-              <button className="smallBtn" onClick={() => setNavOpen(false)}>Close</button>
+              <button className="xBtn" onClick={() => setNavOpen(false)} aria-label="Close menu">x</button>
             </div>
 
             <div className="drawerList">
@@ -204,11 +204,9 @@ useEffect(() => {
       {feedbackOpen && (
         <div className="modalOverlay">
           <div className="modal feedbackModal">
+            <button className="xBtn modalXBtn" onClick={() => setFeedbackOpen(false)} aria-label="Close feedback">x</button>
             <div className="modalSub">Send feedback to</div>
             <div className="feedbackEmail">{FEEDBACK_EMAIL}</div>
-            <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-              <button className="button" onClick={() => setFeedbackOpen(false)}>Cancel</button>
-            </div>
           </div>
         </div>
       )}
