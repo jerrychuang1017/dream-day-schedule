@@ -204,7 +204,6 @@ useEffect(() => {
       {feedbackOpen && (
         <div className="modalOverlay">
           <div className="modal feedbackModal">
-            <h2 className="modalTitle">Feedback</h2>
             <div className="modalSub">Send feedback to</div>
             <div className="feedbackEmail">{FEEDBACK_EMAIL}</div>
             <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
