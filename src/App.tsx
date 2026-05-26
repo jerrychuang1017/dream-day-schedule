@@ -195,6 +195,7 @@ useEffect(() => {
               <button className="button" onClick={toggleTheme}>
                 {state.theme === "dark" ? "Light" : "Dark"}
               </button>
+              <button className="button" onClick={() => setFeedbackOpen(true)}>Feedback</button>
               <button className="button danger" onClick={restart}>Restart</button>
             </div>
           </div>
@@ -230,6 +231,7 @@ useEffect(() => {
             <button className="button" onClick={toggleTheme}>
               {state.theme === "dark" ? "Light" : "Dark"}
             </button>
+            <button className="button" onClick={() => setFeedbackOpen(true)}>Feedback</button>
             <button className="button danger" onClick={restart}>Restart</button>
           </div>
         </div>
@@ -315,13 +317,6 @@ useEffect(() => {
           </div>
         </div>
       </div>
-      <button
-        className="feedbackWidget"
-        onClick={() => setFeedbackOpen(true)}
-        title="Send feedback"
-      >
-        Feedback
-      </button>
     </div>
   );
 }

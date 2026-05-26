@@ -80,6 +80,43 @@ export function from12h(time: string, ampm: "AM" | "PM"): string | null {
   return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
 }
 
+export function fromSmartTimeInput(raw: string, currentAmPm: "AM" | "PM"): string | null {
+  const s = raw.trim();
+  if (!s) return null;
+
+  const colon24 = /^([0-9]{1,2}):([0-5]\d)$/.exec(s);
+  if (colon24) {
+    const h = Number(colon24[1]);
+    const m = Number(colon24[2]);
+    if (h >= 0 && h <= 23) return minutesToHHMM(h * 60 + m);
+  }
+
+  if (/^[0-9]{1,4}$/.test(s)) {
+    const n = s.replace(/^0+/, "") || "0";
+
+    if (n.length <= 2) {
+      const h = Number(n);
+      if (h === 0) return "00:00";
+      if (h >= 13 && h <= 23) return minutesToHHMM(h * 60);
+      if (h === 12) return "12:00";
+    }
+
+    if (n.length === 3 || n.length === 4) {
+      const hourDigits = n.length === 3 ? 1 : 2;
+      const h = Number(n.slice(0, hourDigits));
+      const m = Number(n.slice(hourDigits));
+      if (m >= 0 && m <= 59) {
+        if (h === 0) return minutesToHHMM(m);
+        if (h >= 13 && h <= 23) return minutesToHHMM(h * 60 + m);
+        if (h === 12) return minutesToHHMM(12 * 60 + m);
+      }
+    }
+  }
+
+  const maybeText = smart12hText(s);
+  return maybeText ? from12h(maybeText, currentAmPm) : null;
+}
+
 export function toggleAmPm(hhmm24: string): string {
   const m = toMinutes(hhmm24);
   if (!Number.isFinite(m)) return hhmm24;

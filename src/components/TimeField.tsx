@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { from12h, smart12hText, to12h, toggleAmPm } from "../utils/time";
+import { fromSmartTimeInput, to12h, toggleAmPm } from "../utils/time";
 
 type Props = {
   value24: string;
@@ -14,9 +14,7 @@ export default function TimeField({ value24, onChange24, ariaLabel }: Props) {
   useEffect(() => setText(parsed.time), [parsed.time]);
 
   function commit(nextRaw: string) {
-    const maybeText = smart12hText(nextRaw);
-    const textToUse = maybeText ?? nextRaw;
-    const maybe24 = from12h(textToUse, parsed.ampm);
+    const maybe24 = fromSmartTimeInput(nextRaw, parsed.ampm);
     if (maybe24) onChange24(maybe24);
   }
 
