@@ -971,6 +971,25 @@ body, .container, .layout, .shell{ background: var(--base) !important; }
 .exportBtn{ color: rgba(15,23,42,0.78) !important; }
 .dark .exportBtn{ color: rgba(226,232,240,0.80) !important; }
 
+@media (max-width: 700px){
+  .input, .textarea, .select{
+    font-size:16px !important;
+  }
+
+  .modalOverlay{
+    align-items:flex-start !important;
+    padding-top: max(18px, env(safe-area-inset-top)) !important;
+  }
+
+  .feedbackWidget{
+    top:64px;
+    right:12px;
+    bottom:auto;
+    padding:8px 10px;
+    font-size:11px;
+  }
+}
+
 
 
 /* ===========================

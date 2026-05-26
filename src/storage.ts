@@ -139,11 +139,11 @@ function defaultLog(): LogRow {
 
 function defaultHealth(): HealthFitness {
   return {
-    height: "178cm",
-    weight: "74kg",
-    bodyFatPct: 12,
-    goalWeight: "70kg",
-    goalBodyFatPct: 10,
+    height: "",
+    weight: "",
+    bodyFatPct: 0,
+    goalWeight: "",
+    goalBodyFatPct: 0,
     dietPlan: "",
     workoutPlan: "",
     dietLogs: [defaultLog()],
@@ -159,6 +159,26 @@ function ensureCount<T>(arr: T[], count: number, factory: () => T): T[] {
   const items = Array.isArray(arr) ? arr.slice(0, count) : [];
   while (items.length < count) items.push(factory());
   return items;
+}
+
+function normalizeHealth(health: any): HealthFitness {
+  const next: HealthFitness = {
+    ...defaultHealth(),
+    ...(health || {}),
+    height: health?.height ?? (health?.heightCm ? `${health.heightCm}cm` : ""),
+    weight: health?.weight ?? (health?.weightKg ? `${health.weightKg}kg` : ""),
+    goalWeight: health?.goalWeight ?? (health?.goalWeightKg ? `${health.goalWeightKg}kg` : ""),
+    dietPlan: health?.dietPlan ?? health?.dietNotes ?? "",
+    workoutPlan: health?.workoutPlan ?? health?.workoutNotes ?? "",
+  };
+
+  if (next.height === "178cm") next.height = "";
+  if (next.weight === "74kg") next.weight = "";
+  if (next.bodyFatPct === 12) next.bodyFatPct = 0;
+  if (next.goalWeight === "70kg") next.goalWeight = "";
+  if (next.goalBodyFatPct === 10) next.goalBodyFatPct = 0;
+
+  return next;
 }
 
 function normalizeState(s: any): AppState {
@@ -191,15 +211,7 @@ function normalizeState(s: any): AppState {
 
     dreamHouse: s.dreamHouse ?? defaultDreamHouse(),
     finance: s.finance ?? defaultFinance(),
-    health: s.health ? {
-      ...defaultHealth(),
-      ...s.health,
-      height: s.health.height ?? (s.health.heightCm ? `${s.health.heightCm}cm` : ""),
-      weight: s.health.weight ?? (s.health.weightKg ? `${s.health.weightKg}kg` : ""),
-      goalWeight: s.health.goalWeight ?? (s.health.goalWeightKg ? `${s.health.goalWeightKg}kg` : ""),
-      dietPlan: s.health.dietPlan ?? s.health.dietNotes ?? "",
-      workoutPlan: s.health.workoutPlan ?? s.health.workoutNotes ?? "",
-    } : defaultHealth(),
+    health: normalizeHealth(s.health),
     updatedAt: s.updatedAt ?? s.completedAt ?? {},
     completed: s.completed ?? defaultCompleted(),
   };

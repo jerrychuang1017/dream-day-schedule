@@ -90,7 +90,7 @@ export default function HealthFitness({ state, setState }: Props) {
           </div>
           <div>
             <div className="label">Body fat %</div>
-            <input className="input" type="number" value={h.bodyFatPct} onChange={(e) => setHealth({ bodyFatPct: Number(e.target.value) })} />
+            <input className="input" type="number" value={h.bodyFatPct || ""} onChange={(e) => setHealth({ bodyFatPct: Number(e.target.value || 0) })} />
           </div>
         </div>
 
@@ -104,7 +104,7 @@ export default function HealthFitness({ state, setState }: Props) {
           </div>
           <div>
             <div className="label">Goal body fat %</div>
-            <input className="input" type="number" value={h.goalBodyFatPct} onChange={(e) => setHealth({ goalBodyFatPct: Number(e.target.value) })} />
+            <input className="input" type="number" value={h.goalBodyFatPct || ""} onChange={(e) => setHealth({ goalBodyFatPct: Number(e.target.value || 0) })} />
           </div>
         </div>
 
