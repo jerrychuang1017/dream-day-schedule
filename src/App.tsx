@@ -217,7 +217,7 @@ useEffect(() => {
       )}
 
       {feedbackOpen && (
-        <div className="modalOverlay">
+        <div className="modalOverlay feedbackOverlay">
           <div className="modal feedbackModal">
             <button className="xBtn modalXBtn" onClick={() => setFeedbackOpen(false)} aria-label="Close feedback">x</button>
             <div className="modalSub feedbackLabel">Send feedback to</div>
@@ -259,7 +259,7 @@ useEffect(() => {
               aria-label="Feedback email"
               title="Feedback"
             >
-              <span className="mailIcon" aria-hidden="true" />
+              <span className="mailIcon" aria-hidden="true">✉</span>
             </button>
             <button className="button danger" onClick={restart}>Restart</button>
           </div>

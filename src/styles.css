@@ -97,6 +97,8 @@ a:hover{ text-decoration: underline; }
   gap:10px;
   padding: 10px 12px;
   border-bottom: 1px solid var(--border);
+  position:relative;
+  z-index:30;
 }
 
 .brand{
@@ -193,34 +195,9 @@ a:hover{ text-decoration: underline; }
 }
 
 .mailIcon{
-  width:18px;
-  height:13px;
-  border:2px solid currentColor;
-  border-radius:2px;
-  position:relative;
   display:block;
-}
-
-.mailIcon::before,
-.mailIcon::after{
-  content:"";
-  position:absolute;
-  top:2px;
-  width:10px;
-  height:2px;
-  background:currentColor;
-}
-
-.mailIcon::before{
-  left:1px;
-  transform:rotate(32deg);
-  transform-origin:left center;
-}
-
-.mailIcon::after{
-  right:1px;
-  transform:rotate(-32deg);
-  transform-origin:right center;
+  font-size:18px;
+  line-height:1;
 }
 
 .xBtn{
@@ -867,6 +844,16 @@ a:hover{ text-decoration: underline; }
   width:min(560px, calc(100vw - 24px));
   position:relative;
   padding:18px 44px 18px 18px !important;
+}
+
+.feedbackOverlay{
+  pointer-events:none;
+  background:transparent !important;
+  z-index:20;
+}
+
+.feedbackOverlay .feedbackModal{
+  pointer-events:auto;
 }
 
 .modalXBtn{
