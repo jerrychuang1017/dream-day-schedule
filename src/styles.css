@@ -206,14 +206,14 @@ a:hover{ text-decoration: underline; }
 .feedbackIcon::before{
   content:"";
   position:absolute;
-  left:3px;
-  bottom:-7px;
+  left:5px;
+  bottom:-8px;
   width:8px;
   height:8px;
+  background:var(--base);
   border-left:2px solid currentColor;
   border-bottom:2px solid currentColor;
-  background:var(--base);
-  transform:skew(-22deg);
+  transform:rotate(-45deg);
 }
 
 .feedbackIcon::after{
