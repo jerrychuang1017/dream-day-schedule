@@ -1126,6 +1126,14 @@ body, .container, .layout, .shell{ background: var(--base) !important; }
     padding-top: max(18px, env(safe-area-inset-top)) !important;
   }
 
+  .feedbackOverlay{
+    padding-top: max(70px, calc(env(safe-area-inset-top) + 70px)) !important;
+  }
+
+  .feedbackModal{
+    width:calc(100vw - 24px);
+  }
+
 }
 
 
