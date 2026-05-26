@@ -259,7 +259,7 @@ useEffect(() => {
               aria-label="Feedback email"
               title="Feedback"
             >
-              <span className="mailIcon" aria-hidden="true">✉</span>
+              <span className="feedbackIcon" aria-hidden="true" />
             </button>
             <button className="button danger" onClick={restart}>Restart</button>
           </div>
