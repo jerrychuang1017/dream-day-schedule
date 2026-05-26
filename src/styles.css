@@ -109,8 +109,8 @@ a:hover{ text-decoration: underline; }
 }
 
 .iconBtn{
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -120,6 +120,8 @@ a:hover{ text-decoration: underline; }
   cursor:pointer;
   user-select:none;
   font-weight: 900;
+  font-size:18px;
+  line-height:1;
   color:var(--fg) !important;
   opacity:1 !important;
 }
@@ -186,7 +188,9 @@ a:hover{ text-decoration: underline; }
   font-size:16px;
   font-weight:900;
   line-height:1;
-  min-width:24px;
+  width:28px;
+  height:28px;
+  min-width:28px;
   text-align:center;
   display:inline-flex;
   align-items:center;
@@ -198,8 +202,8 @@ a:hover{ text-decoration: underline; }
 }
 
 .feedbackSvg{
-  width:23px;
-  height:23px;
+  width:20px;
+  height:20px;
   display:block;
   overflow:visible;
 }
@@ -207,7 +211,7 @@ a:hover{ text-decoration: underline; }
 .feedbackSvg path{
   fill:none;
   stroke:currentColor;
-  stroke-width:2.4;
+  stroke-width:2.2;
   stroke-linecap:round;
   stroke-linejoin:round;
 }
