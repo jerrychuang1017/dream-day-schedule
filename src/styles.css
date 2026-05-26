@@ -194,37 +194,19 @@ a:hover{ text-decoration: underline; }
   text-decoration:underline;
 }
 
-.feedbackIcon{
-  width:21px;
-  height:16px;
-  border:2px solid currentColor;
-  border-radius:3px;
+.feedbackSvg{
+  width:23px;
+  height:23px;
   display:block;
-  position:relative;
+  overflow:visible;
 }
 
-.feedbackIcon::before{
-  content:"";
-  position:absolute;
-  left:5px;
-  bottom:-8px;
-  width:8px;
-  height:8px;
-  background:var(--base);
-  border-left:2px solid currentColor;
-  border-bottom:2px solid currentColor;
-  transform:rotate(-45deg);
-}
-
-.feedbackIcon::after{
-  content:"";
-  position:absolute;
-  left:4px;
-  top:4px;
-  width:11px;
-  height:2px;
-  background:currentColor;
-  box-shadow:0 5px 0 currentColor;
+.feedbackSvg path{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2.4;
+  stroke-linecap:round;
+  stroke-linejoin:round;
 }
 
 .xBtn{
