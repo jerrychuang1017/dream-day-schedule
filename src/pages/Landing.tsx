@@ -19,7 +19,7 @@ export default function Landing({ state }: Props) {
         <div className="hr homeDivider" />
         <div className="homeVision">
           <div className="sub homeVisionText">
-            <div>A little alone time to breathe and listen to your inner voice.</div>
+            <div>A pause from the noise.</div>
             <div>A reason to look forward to tomorrow.</div>
           </div>
         </div>
