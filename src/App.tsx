@@ -261,8 +261,6 @@ useEffect(() => {
             >
               <svg className="feedbackSvg" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 5h16v11H9l-5 4V5Z" />
-                <path d="M8 9h8" />
-                <path d="M8 13h6" />
               </svg>
             </button>
             <button className="button danger" onClick={restart}>Restart</button>
