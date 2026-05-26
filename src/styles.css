@@ -176,7 +176,7 @@ a:hover{ text-decoration: underline; }
 .iconTextBtn{
   border:none;
   background:transparent;
-  color:var(--fg);
+  color:var(--fg) !important;
   padding:6px 0;
   cursor:pointer;
   font-family:var(--font);
