@@ -71,8 +71,9 @@ export default function AllSummary({ state }: Props) {
   }
 
   return (
-    <div className="printWrap" ref={exportRef}>
-      <div className="card printSection">
+    <>
+      <div className="printWrap" ref={exportRef}>
+        <div className="card printSection">
         <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
           <div>
             <div className="h1" style={{ fontSize: 16, textTransform: "uppercase", letterSpacing: "0.12em" }}>{title}</div>
@@ -273,9 +274,10 @@ export default function AllSummary({ state }: Props) {
           </tbody>
         </table>
       </Section>
+      </div>
       <div className="pageActions" style={{ marginTop: 18 }}>
         <button className="button primary" onClick={doExport}>Export</button>
       </div>
-    </div>
+    </>
   );
 }
