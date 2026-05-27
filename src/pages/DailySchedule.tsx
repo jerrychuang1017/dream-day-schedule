@@ -166,22 +166,6 @@ export default function DailySchedule({ state, setState }: Props) {
             <TimeField value24={today.sleepTime} onChange24={(v) => updateToday({ sleepTime: v })} />
           </div>
         </div>
-
-        <div className="hr" />
-
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <button
-            className="button danger"
-            onClick={() => {
-              const start = today.wakeTime;
-              updateToday({ blocks: [{ id: uid(), start, end: defaultEnd(start, start, today.sleepTime), activity: "", withWho: "" }] });
-              setStatus(null);
-            }}
-          >
-            Clear
-          </button>
-        </div>
-
         {reachedSleep && <div className="noticeOk">✓ Reached sleep time.</div>}
         {status && <div className="noticeErr">! {status}</div>}
       </div>

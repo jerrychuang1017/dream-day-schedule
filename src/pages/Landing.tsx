@@ -3,9 +3,10 @@ import type { AppState } from "../types";
 
 type Props = {
   state: AppState;
+  onStart: () => void;
 };
 
-export default function Landing({ state }: Props) {
+export default function Landing({ state, onStart }: Props) {
   return (
     <div className="homePage">
       <div className="card homeIntro" style={{ textAlign: "center" }}>
@@ -22,6 +23,9 @@ export default function Landing({ state }: Props) {
             <div>A pause from the noise.</div>
             <div>A reason to look forward to tomorrow.</div>
           </div>
+          <button className="homeCta" onClick={onStart} aria-label="Go to Dream Day Schedule">
+            ↓
+          </button>
         </div>
       </div>
     </div>

@@ -60,6 +60,7 @@ export default function App() {
   const [forceNamePrompt, setForceNamePrompt] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackCopied, setFeedbackCopied] = useState(false);
+  const [restartConfirmOpen, setRestartConfirmOpen] = useState(false);
 
 const updateForStep = (step: StepId, next: AppState | ((prev: AppState) => AppState)) => {
   setState((prev) => {
@@ -129,8 +130,73 @@ useEffect(() => {
     setState({ ...fresh, name: "" });
     setPage("home");
     setNavOpen(false);
+    setRestartConfirmOpen(false);
     setNameDraft("");
     setForceNamePrompt(false);
+  }
+
+  function clearCurrentPage() {
+    if (page === "home" || page === "all") return;
+
+    const fresh = ensureTodaySchedule(blankState());
+    const now = new Date().toISOString();
+
+    setState((prev) => {
+      const updatedAt = { ...(prev.updatedAt ?? {}) };
+      const completed = { ...prev.completed };
+
+      if (page === "schedule") {
+        updatedAt.schedule = now;
+        completed.schedule = false;
+        return { ...prev, schedules: fresh.schedules, updatedAt, completed };
+      }
+      if (page === "people") {
+        updatedAt.people = now;
+        completed.people = false;
+        return { ...prev, people: fresh.people, updatedAt, completed };
+      }
+      if (page === "top10") {
+        updatedAt.top10 = now;
+        completed.top10 = false;
+        return { ...prev, top10: fresh.top10, updatedAt, completed };
+      }
+      if (page === "goals") {
+        updatedAt.goals = now;
+        completed.goals = false;
+        return { ...prev, goals: fresh.goals, updatedAt, completed };
+      }
+      if (page === "cities") {
+        updatedAt.cities = now;
+        completed.cities = false;
+        return { ...prev, cityCriteria: fresh.cityCriteria, cities: fresh.cities, updatedAt, completed };
+      }
+      if (page === "places") {
+        updatedAt.places = now;
+        completed.places = false;
+        return { ...prev, places: fresh.places, updatedAt, completed };
+      }
+      if (page === "food") {
+        updatedAt.food = now;
+        completed.food = false;
+        return { ...prev, foods: fresh.foods, updatedAt, completed };
+      }
+      if (page === "dreamhouse") {
+        updatedAt.dreamhouse = now;
+        completed.dreamhouse = false;
+        return { ...prev, dreamHouse: fresh.dreamHouse, updatedAt, completed };
+      }
+      if (page === "finance") {
+        updatedAt.finance = now;
+        completed.finance = false;
+        return { ...prev, finance: fresh.finance, updatedAt, completed };
+      }
+      if (page === "health") {
+        updatedAt.health = now;
+        completed.health = false;
+        return { ...prev, health: fresh.health, updatedAt, completed };
+      }
+      return prev;
+    });
   }
 
   function confirmName() {
@@ -210,10 +276,24 @@ useEffect(() => {
               <button className="button" onClick={toggleTheme}>
                 {state.theme === "dark" ? "Light" : "Dark"}
               </button>
-              <button className="button danger" onClick={restart}>Restart</button>
+              <button className="button danger" onClick={() => { setNavOpen(false); setRestartConfirmOpen(true); }}>Restart</button>
             </div>
           </div>
         </>
+      )}
+
+      {restartConfirmOpen && (
+        <div className="modalOverlay">
+          <div className="modal">
+            <button className="xBtn modalXBtn" onClick={() => setRestartConfirmOpen(false)} aria-label="Close restart confirmation">x</button>
+            <h2 className="modalTitle">Restart?</h2>
+            <div className="modalSub" style={{ marginTop: 10 }}>All pages will be cleared.</div>
+            <div style={{ display: "flex", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
+              <button className="button danger" onClick={restart}>Restart</button>
+              <button className="button" onClick={() => setRestartConfirmOpen(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
       )}
 
       {feedbackOpen && (
@@ -263,7 +343,9 @@ useEffect(() => {
                 <path d="M4 5h16v11H9l-5 4V5Z" />
               </svg>
             </button>
-            <button className="button danger" onClick={restart}>Restart</button>
+            {page !== "home" && page !== "all" ? (
+              <button className="button danger" onClick={clearCurrentPage}>Clear</button>
+            ) : null}
           </div>
         </div>
 
@@ -271,7 +353,7 @@ useEffect(() => {
           <div className="nav" />
           <div className="content" ref={contentRef}>
             {page === "home" && (
-              <Landing state={state} />
+              <Landing state={state} onStart={() => setPage("schedule")} />
             )}
 
             {page === "schedule" && (

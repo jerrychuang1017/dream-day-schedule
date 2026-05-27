@@ -584,6 +584,7 @@ a:hover{ text-decoration: underline; }
   background: linear-gradient(180deg, var(--panel), var(--panel2));
   box-shadow: var(--shadow);
   padding: 14px;
+  position:relative;
 }
 .modalTitle{
   margin:0;
@@ -874,6 +875,23 @@ a:hover{ text-decoration: underline; }
 
 .homeVisionText{
   line-height:1.75;
+}
+
+.homeCta{
+  margin-top:18px;
+  border:none;
+  background:transparent;
+  color:var(--fg);
+  cursor:pointer;
+  font-family:var(--font);
+  font-size:24px;
+  font-weight:900;
+  line-height:1;
+  padding:4px 10px;
+}
+
+.homeCta:hover{
+  transform:translateY(2px);
 }
 
 .feedbackModal{
