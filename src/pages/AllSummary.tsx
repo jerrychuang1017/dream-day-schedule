@@ -89,14 +89,21 @@ export default function AllSummary({ state }: Props) {
 
       <Section title="Top 10 must do">
         <table className="table">
+          <colgroup>
+            <col />
+            <col style={{ width: 72 }} />
+          </colgroup>
           <thead>
-            <tr><th className="th">Done</th><th className="th">Item</th></tr>
+            <tr>
+              <th className="th">Must do</th>
+              <th className="th" style={{ textAlign: "right" }}>Done</th>
+            </tr>
           </thead>
           <tbody>
             {state.top10.map((t, i) => (
               <tr key={t.id}>
-                <td className="td">{t.done ? "✓" : ""}</td>
                 <td className="td">#{i + 1} {oneLine(t.text) || "—"}</td>
+                <td className="td" style={{ textAlign: "right" }}>{t.done ? "✓" : ""}</td>
               </tr>
             ))}
           </tbody>
