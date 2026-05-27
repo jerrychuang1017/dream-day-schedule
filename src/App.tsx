@@ -124,6 +124,12 @@ useEffect(() => {
     setState((prev) => ({ ...prev, theme: prev.theme === "dark" ? "light" : "dark" }));
   }
 
+  function goRelativePage(offset: number) {
+    const current = PAGE_IDS.indexOf(page);
+    const next = PAGE_IDS[current + offset];
+    if (next) setPage(next);
+  }
+
   function restart() {
     clearAll();
     const fresh = ensureTodaySchedule(blankState());
@@ -273,9 +279,6 @@ useEffect(() => {
             </div>
 
             <div className="drawerFooter">
-              <button className="button" onClick={toggleTheme}>
-                {state.theme === "dark" ? "Light" : "Dark"}
-              </button>
               <button className="button danger" onClick={() => { setNavOpen(false); setRestartConfirmOpen(true); }}>Restart</button>
             </div>
           </div>
@@ -321,6 +324,24 @@ useEffect(() => {
               <div className="iconBtn" onClick={() => setNavOpen((v) => !v)} title="Menu">
                 ≡
               </div>
+              <button
+                className="iconBtn"
+                onClick={() => goRelativePage(-1)}
+                disabled={PAGE_IDS.indexOf(page) <= 0}
+                title="Previous page"
+                aria-label="Previous page"
+              >
+                ‹
+              </button>
+              <button
+                className="iconBtn"
+                onClick={() => goRelativePage(1)}
+                disabled={PAGE_IDS.indexOf(page) >= PAGE_IDS.length - 1}
+                title="Next page"
+                aria-label="Next page"
+              >
+                ›
+              </button>
             </div>
           </div>
 

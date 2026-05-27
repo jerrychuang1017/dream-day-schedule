@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { exportElementToJpeg } from "../utils/export";
 import { formatUpdatedAt } from "../utils/format";
 import type { AppState } from "../types";
+import { uid } from "../utils/time";
 
 type Props = { state: AppState; setState: (s: AppState) => void };
 
@@ -20,12 +21,29 @@ export default function Top10MustDo({ state, setState }: Props) {
     if (e.key !== "Enter") return;
     e.preventDefault();
     const next = state.top10[index + 1];
-    if (!next) return;
+    if (!next) {
+      addItem(true);
+      return;
+    }
     const el = document.querySelector(`[data-top10-item="${next.id}"]`) as HTMLInputElement | null;
     el?.focus();
   }
   function update(id: string, text: string) {
     setState({ ...state, top10: state.top10.map((x) => (x.id === id ? { ...x, text } : x)) });
+  }
+  function addItem(focusNew = false) {
+    if (state.top10.length >= 10) return;
+    const item = { id: uid(), text: "", done: false };
+    setState({ ...state, top10: [...state.top10, item] });
+    if (focusNew) {
+      window.setTimeout(() => {
+        document.querySelector<HTMLInputElement>(`[data-top10-item="${item.id}"]`)?.focus();
+      }, 0);
+    }
+  }
+  function removeItem(id: string) {
+    const next = state.top10.filter((x) => x.id !== id);
+    setState({ ...state, top10: next.length ? next : [{ id: uid(), text: "", done: false }] });
   }
 
   return (
@@ -41,19 +59,15 @@ export default function Top10MustDo({ state, setState }: Props) {
       </div>
 
       <div className="card">
+        <div className="top10HeaderRow">
+          <div className="label">Item</div>
+          <div className="label">Done</div>
+          <div className="label">Action</div>
+        </div>
         {state.top10.map((x, i) => (
-          <div key={x.id} className="card" style={{ background: "transparent" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+          <div key={x.id} className="top10Row">
+            <div>
               <div style={{ fontWeight: 900 }}>#{i + 1}</div>
-              <button
-                className={"doneCheckBtn doneBtn " + (x.done ? "isDone" : "")}
-                aria-label={x.done ? "Done" : "Mark done"}
-                onClick={() => setState({ ...state, top10: state.top10.map(t => t.id === x.id ? { ...t, done: !t.done } : t) })}
-              >
-                {x.done ? "✓" : ""}
-              </button>
-            </div>
-            <div style={{ marginTop: 8 }}>
               <input
                 className="input"
                 data-top10-item={x.id}
@@ -63,8 +77,21 @@ export default function Top10MustDo({ state, setState }: Props) {
                 placeholder="What’s your must-do?"
               />
             </div>
+            <button
+              className={"doneCheckBtn doneBtn " + (x.done ? "isDone" : "")}
+              aria-label={x.done ? "Done" : "Mark done"}
+              onClick={() => setState({ ...state, top10: state.top10.map(t => t.id === x.id ? { ...t, done: !t.done } : t) })}
+            >
+              {x.done ? "✓" : ""}
+            </button>
+            <button className="smallBtn danger" onClick={() => removeItem(x.id)}>Delete</button>
           </div>
         ))}
+        {state.top10.length < 10 ? (
+          <div style={{ marginTop: 12 }}>
+            <button className="button" onClick={() => addItem(true)}>+ Add Top 10 must do</button>
+          </div>
+        ) : null}
       </div>
 
       <div className="pageActions">

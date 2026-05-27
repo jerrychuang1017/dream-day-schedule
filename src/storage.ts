@@ -161,6 +161,26 @@ function ensureCount<T>(arr: T[], count: number, factory: () => T): T[] {
   return items;
 }
 
+function normalizeTop10(items: any[], factory: () => TopItem): TopItem[] {
+  const raw = Array.isArray(items) ? items.slice(0, 10) : [];
+  const normalized = raw.map((x) => ({
+    id: x?.id ?? uid(),
+    text: x?.text ?? "",
+    done: Boolean(x?.done),
+    targetMonth: x?.targetMonth ?? "",
+  }));
+
+  while (
+    normalized.length > 1 &&
+    !String(normalized[normalized.length - 1].text || "").trim() &&
+    !normalized[normalized.length - 1].done
+  ) {
+    normalized.pop();
+  }
+
+  return normalized.length ? normalized : [factory()];
+}
+
 function normalizeHealth(health: any): HealthFitness {
   const next: HealthFitness = {
     ...defaultHealth(),
@@ -198,7 +218,7 @@ function normalizeState(s: any): AppState {
     schedules,
 
     people: ensureAtLeastOne(s.people || [], peopleFactory),
-    top10: ensureCount(s.top10 || [], 10, topFactory),
+    top10: normalizeTop10(s.top10 || [], topFactory),
     goals: s.goals ? {
       short1y: ensureAtLeastOne(s.goals.short1y || [], topFactory).map((x: TopItem) => ({ ...x, targetMonth: x.targetMonth ?? "" })),
       mid3y: ensureAtLeastOne(s.goals.mid3y || [], topFactory).map((x: TopItem) => ({ ...x, targetMonth: x.targetMonth ?? "" })),
@@ -224,7 +244,7 @@ export function blankState(): AppState {
     email: "",
     schedules: { [today]: defaultToday() },
     people: [{ id: uid(), name: "", relationship: "", positive: true, notes: "" }],
-    top10: ensureCount([], 10, () => ({ id: uid(), text: "", done: false })),
+    top10: [{ id: uid(), text: "", done: false }],
     goals: {
       short1y: [{ id: uid(), text: "", targetMonth: "" }],
       mid3y: [{ id: uid(), text: "", targetMonth: "" }],
@@ -290,7 +310,7 @@ export function loadState(): AppState {
     schedules: { [today]: defaultToday() },
 
     people: [{ id: uid(), name: "", relationship: "", positive: true, notes: "" }],
-    top10: ensureCount([], 10, () => ({ id: uid(), text: "", done: false })),
+    top10: [{ id: uid(), text: "", done: false }],
     goals: defaultGoals(),
     cityCriteria: defaultCityCriteriaNames(),
     cities: [makeDefaultCity()],

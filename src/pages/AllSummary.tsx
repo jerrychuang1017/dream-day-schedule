@@ -8,7 +8,7 @@ type Props = { state: AppState };
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="card printSection" style={{ background: "transparent" }}>
+    <div className="card printSection allSummarySection" style={{ background: "transparent" }}>
       <div style={{ fontWeight: 900, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--muted)" }}>
         {title}
       </div>
@@ -42,7 +42,7 @@ export default function AllSummary({ state }: Props) {
         <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
           <div>
             <div className="h1" style={{ fontSize: 16, textTransform: "uppercase", letterSpacing: "0.12em" }}>{title}</div>
-            <div className="sub" style={{ marginTop: 6 }}>All data in one clean printable page.</div>          </div>
+            <div className="sub" style={{ marginTop: 6 }}>All data in one clean export page.</div>          </div>
           
         </div>
       </div>
@@ -88,9 +88,19 @@ export default function AllSummary({ state }: Props) {
       </Section>
 
       <Section title="Top 10 must do">
-        <ol style={{ margin: 0, paddingLeft: 18 }}>
-          {state.top10.map((t) => <li key={t.id} style={{ marginBottom: 6 }}>{oneLine(t.text) || "—"}</li>)}
-        </ol>
+        <table className="table">
+          <thead>
+            <tr><th className="th">Done</th><th className="th">Item</th></tr>
+          </thead>
+          <tbody>
+            {state.top10.map((t, i) => (
+              <tr key={t.id}>
+                <td className="td">{t.done ? "✓" : ""}</td>
+                <td className="td">#{i + 1} {oneLine(t.text) || "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </Section>
 
       <Section title="Goals (1/3/5 years)">

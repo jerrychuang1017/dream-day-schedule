@@ -238,7 +238,7 @@ export default function DailySchedule({ state, setState }: Props) {
           <button className="button" onClick={addBlock} disabled={!canAddMore}>+ Add block</button>
         </div>
 
-        <div className="hr" />
+        <div className="hr schedulePreviewBreak" />
         <div className="label">Preview</div>
 
         <div className="wpWrap" ref={previewRef}>
