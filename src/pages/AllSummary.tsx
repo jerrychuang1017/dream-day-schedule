@@ -21,12 +21,30 @@ function goalText(x: { text: string; targetMonth?: string }) {
   return `${x.targetMonth ? `${x.targetMonth} · ` : ""}${oneLine(x.text) || "—"}`;
 }
 
+function estimateYearsToFire(current: number, monthly: number, target: number, annualR: number): number | null {
+  if (target <= 0) return null;
+  if (current >= target) return 0;
+  const monthlyR = Math.pow(1 + Math.max(0, annualR), 1 / 12) - 1;
+  let value = Math.max(0, current);
+  for (let month = 1; month <= 1200; month++) {
+    value = value * (1 + monthlyR) + Math.max(0, monthly);
+    if (value >= target) return month / 12;
+  }
+  return null;
+}
+
 export default function AllSummary({ state }: Props) {
   const exportRef = useRef<HTMLDivElement | null>(null);
   const todayKey = dayKeyForToday();
   const today = state.schedules[todayKey];
   const name = state.name === "(skip)" ? "" : (state.name || "");
   const title = name ? `${name}'s Project Dream Day` : "Project Dream Day";
+  const yearsToFire = estimateYearsToFire(
+    Number(state.finance.currentNetWorth) || 0,
+    Number(state.finance.monthlyInvest) || 0,
+    Number(state.finance.fireNumber) || 0,
+    (Number(state.finance.annualReturnPct) || 0) / 100
+  );
   const cityRankings = [...state.cities]
     .map((c) => {
       const vals = (state.cityCriteria || []).map((k) => Number(c.scores[k] ?? 0));
@@ -211,10 +229,14 @@ export default function AllSummary({ state }: Props) {
       <Section title="Dream house">
         <table className="table">
           <tbody>
-            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>City</td><td className="td">{state.dreamHouse.location}</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>City</td><td className="td">{oneLine(state.dreamHouse.location) || "—"}</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Environment</td><td className="td">{oneLine(state.dreamHouse.environment) || "—"}</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Type</td><td className="td">{oneLine(state.dreamHouse.propertyType) || "—"}</td></tr>
             <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Budget</td><td className="td">{formatNumberWithCommas(state.dreamHouse.budgetTWD)}</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Floors</td><td className="td">{state.dreamHouse.floors}</td></tr>
             <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Land / Indoor</td><td className="td">{state.dreamHouse.landPing} / {state.dreamHouse.indoorPing}</td></tr>
             <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Rooms</td><td className="td">{state.dreamHouse.bedrooms} bed · {state.dreamHouse.bathrooms} bath</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Notes</td><td className="td">{oneLine(state.dreamHouse.notes) || "—"}</td></tr>
           </tbody>
         </table>
         <div className="hr" />
@@ -231,6 +253,8 @@ export default function AllSummary({ state }: Props) {
             <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Current net worth</td><td className="td">{formatNumberWithCommas(state.finance.currentNetWorth)}</td></tr>
             <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Monthly invest</td><td className="td">{formatNumberWithCommas(state.finance.monthlyInvest)}</td></tr>
             <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Annual return %</td><td className="td">{state.finance.annualReturnPct}%</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Estimated time</td><td className="td">{yearsToFire === null ? "—" : `${yearsToFire.toFixed(1)} years`}</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Notes</td><td className="td">{oneLine(state.finance.notes) || "—"}</td></tr>
           </tbody>
         </table>
       </Section>
@@ -242,6 +266,10 @@ export default function AllSummary({ state }: Props) {
             <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Weight</td><td className="td">{state.health.weight}</td></tr>
             <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Body fat</td><td className="td">{state.health.bodyFatPct}%</td></tr>
             <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Goals</td><td className="td">{state.health.goalWeight} / {state.health.goalBodyFatPct}%</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Diet plans</td><td className="td">{oneLine(state.health.dietPlan) || "—"}</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Diet log</td><td className="td">{state.health.dietLogs.map((x) => `${x.date}: ${oneLine(x.note) || "—"}`).join(" · ") || "—"}</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Workout plans</td><td className="td">{oneLine(state.health.workoutPlan) || "—"}</td></tr>
+            <tr><td className="td" style={{ color: "var(--muted)", fontWeight: 900 }}>Workout log</td><td className="td">{state.health.workoutLogs.map((x) => `${x.date}: ${oneLine(x.note) || "—"}`).join(" · ") || "—"}</td></tr>
           </tbody>
         </table>
       </Section>
