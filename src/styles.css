@@ -349,6 +349,10 @@ a:hover{ text-decoration: underline; }
   margin-top:12px;
 }
 
+.cityFieldsDivider{
+  margin:24px 0 18px;
+}
+
 .cityFieldsDetails summary{
   cursor:pointer;
   font-weight:900;

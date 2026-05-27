@@ -151,7 +151,7 @@ export default function FavoriteCity({ state, setState }: Props) {
           <button className="button" onClick={addCity}>+ Add city</button>
         </div>
 
-        <div className="hr" />
+        <div className="hr cityFieldsDivider" />
 
         <details className="cityFieldsDetails">
           <summary>Update fields</summary>
