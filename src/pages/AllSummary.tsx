@@ -111,19 +111,19 @@ export default function AllSummary({ state }: Props) {
       </Section>
 
       <Section title="Goals (1/3/5 years)">
-        <div className="grid2">
-          <div className="card printSection" style={{ background: "transparent" }}>
-            <div className="label">Short 1 year</div>
-            <ul style={{ margin: 0, paddingLeft: 18 }}>{state.goals.short1y.map(x => <li key={x.id}>{goalText(x)}</li>)}</ul>
+        <div className="allGoalsGrid">
+          <div className="allGoalBlock">
+            <div className="allGoalTitle">Short 1 year</div>
+            <ul className="allGoalList">{state.goals.short1y.map(x => <li key={x.id}>{goalText(x)}</li>)}</ul>
           </div>
-          <div className="card printSection" style={{ background: "transparent" }}>
-            <div className="label">Mid 3 years</div>
-            <ul style={{ margin: 0, paddingLeft: 18 }}>{state.goals.mid3y.map(x => <li key={x.id}>{goalText(x)}</li>)}</ul>
+          <div className="allGoalBlock">
+            <div className="allGoalTitle">Mid 3 years</div>
+            <ul className="allGoalList">{state.goals.mid3y.map(x => <li key={x.id}>{goalText(x)}</li>)}</ul>
           </div>
-        </div>
-        <div style={{ marginTop: 12 }} className="card printSection">
-          <div className="label">Long 5 years</div>
-          <ul style={{ margin: 0, paddingLeft: 18 }}>{state.goals.long5y.map(x => <li key={x.id}>{goalText(x)}</li>)}</ul>
+          <div className="allGoalBlock">
+            <div className="allGoalTitle">Long 5 years</div>
+            <ul className="allGoalList">{state.goals.long5y.map(x => <li key={x.id}>{goalText(x)}</li>)}</ul>
+          </div>
         </div>
       </Section>
 
