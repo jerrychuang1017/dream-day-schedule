@@ -632,6 +632,39 @@ a:hover{ text-decoration: underline; }
   line-height: 1.45;
 }
 
+.privacyInlineBtn{
+  background:transparent;
+  border:0;
+  color:var(--muted);
+  cursor:pointer;
+  font:inherit;
+  font-size:11px;
+  font-weight:800;
+  margin:12px 0 0;
+  padding:0;
+  text-align:left;
+}
+
+.privacyInlineBtn:hover{
+  color:rgba(var(--accent-rgb),0.95);
+}
+
+.privacyList{
+  display:grid;
+  gap:8px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+  margin-top:12px;
+  padding-right:24px;
+}
+
+.privacyList div::before{
+  content:"- ";
+  color:var(--fg);
+  font-weight:900;
+}
+
 
 /* Yeezy-ish minimal vibe */
 .h1, .navItem, .button, .smallBtn{

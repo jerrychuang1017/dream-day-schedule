@@ -61,6 +61,7 @@ export default function App() {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackCopied, setFeedbackCopied] = useState(false);
   const [restartConfirmOpen, setRestartConfirmOpen] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
 const updateForStep = (step: StepId, next: AppState | ((prev: AppState) => AppState)) => {
   setState((prev) => {
@@ -244,6 +245,9 @@ useEffect(() => {
               <button className="button primary" onClick={confirmName}>Continue</button>
               <button className="button" onClick={skipName}>Skip</button>
             </div>
+            <button className="privacyInlineBtn" onClick={() => setPrivacyOpen(true)}>
+              Privacy: your entries stay on this device.
+            </button>
           </div>
         </div>
       )}
@@ -273,6 +277,7 @@ useEffect(() => {
             </div>
 
             <div className="drawerFooter">
+              <button className="button" onClick={() => { setNavOpen(false); setPrivacyOpen(true); }}>Privacy</button>
               <button className="button danger" onClick={() => { setNavOpen(false); setRestartConfirmOpen(true); }}>Restart</button>
             </div>
           </div>
@@ -288,6 +293,23 @@ useEffect(() => {
             <div style={{ display: "flex", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
               <button className="button danger" onClick={restart}>Restart</button>
               <button className="button" onClick={() => setRestartConfirmOpen(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {privacyOpen && (
+        <div className="modalOverlay">
+          <div className="modal">
+            <button className="xBtn modalXBtn" onClick={() => setPrivacyOpen(false)} aria-label="Close privacy notice">x</button>
+            <h2 className="modalTitle">Privacy & data</h2>
+            <div className="privacyList">
+              <div>Your entries are saved in this browser on this device.</div>
+              <div>We do not receive the life data you type into the pages.</div>
+              <div>Export creates an image in your browser.</div>
+              <div>Vercel Analytics tracks anonymous visits and page views, not your entries.</div>
+              <div>Feedback only shares what you choose to send by email.</div>
+              <div>Please avoid entering passwords, bank numbers, medical records, or anything you would not want stored on this device.</div>
             </div>
           </div>
         </div>
