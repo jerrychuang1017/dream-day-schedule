@@ -32,10 +32,10 @@ type PageId =
 const NAV: Array<{ id: PageId; label: string }> = [
   { id: "home", label: "Home" },
   { id: "schedule", label: "Dream Day Schedule" },
-  { id: "people", label: "People relationship" },
-  { id: "top10", label: "Top 10 must do" },
+  { id: "people", label: "People relationships" },
+  { id: "top10", label: "Top 10 must-dos" },
   { id: "goals", label: "Goals (1/3/5)" },
-  { id: "cities", label: "Favorite city" },
+  { id: "cities", label: "Favorite cities" },
   { id: "places", label: "Places" },
   { id: "food", label: "Top 5 restaurants" },
   { id: "dreamhouse", label: "Dream house" },

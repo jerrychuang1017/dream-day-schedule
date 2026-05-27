@@ -44,7 +44,7 @@ export default function PeopleRelationship({ state, setState }: Props) {
       <div className="card" style={{ background: "transparent" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
           <div>
-            <div className="h1" style={{ fontSize: 13, marginBottom: 6 }}>{name ? `${name}'s People relationship` : 'People relationship'}</div>
+            <div className="h1" style={{ fontSize: 13, marginBottom: 6 }}>{name ? `${name}'s People relationships` : 'People relationships'}</div>
             <div className="sub">Keep people who help you grow. Avoid energy drains.</div>
             {state.updatedAt?.people ? <div className="sub">Updated {formatUpdatedAt(state.updatedAt.people)}</div> : null}
           </div>

@@ -51,8 +51,8 @@ export default function Top10MustDo({ state, setState }: Props) {
       <div className="card" style={{ background: "transparent" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
           <div>
-            <div className="h1" style={{ fontSize: 13, marginBottom: 6 }}>{name ? `${name}'s Top 10 must do` : 'Top 10 must do'}</div>
-            <div className="sub">Your top-10 list of things you want to achieve. Toggle Done when you complete one.</div>
+            <div className="h1" style={{ fontSize: 13, marginBottom: 6 }}>{name ? `${name}'s Top 10 must-dos` : 'Top 10 must-dos'}</div>
+            <div className="sub">Your top-10 list of things you want to achieve. Mark each one done when you complete it.</div>
             {state.updatedAt?.top10 ? <div className="sub">Updated {formatUpdatedAt(state.updatedAt.top10)}</div> : null}
           </div>
         </div>
@@ -89,7 +89,7 @@ export default function Top10MustDo({ state, setState }: Props) {
         ))}
         {state.top10.length < 10 ? (
           <div style={{ marginTop: 12 }}>
-            <button className="button" onClick={() => addItem(true)}>+ Add Top 10 must do</button>
+            <button className="button" onClick={() => addItem(true)}>+ Add must-do</button>
           </div>
         ) : null}
       </div>

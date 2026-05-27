@@ -103,7 +103,7 @@ export default function AllSummary({ state }: Props) {
         )}
       </Section>
 
-      <Section title="People relationship">
+      <Section title="People relationships">
         <table className="table">
           <thead>
             <tr><th className="th">Name</th><th className="th">Relationship</th><th className="th">Keep close?</th><th className="th">Notes</th></tr>
@@ -121,7 +121,7 @@ export default function AllSummary({ state }: Props) {
         </table>
       </Section>
 
-      <Section title="Top 10 must do">
+      <Section title="Top 10 must-dos">
         <table className="table">
           <colgroup>
             <col />
@@ -129,7 +129,7 @@ export default function AllSummary({ state }: Props) {
           </colgroup>
           <thead>
             <tr>
-              <th className="th">Must do</th>
+              <th className="th">Must-do</th>
               <th className="th" style={{ textAlign: "right" }}>Done</th>
             </tr>
           </thead>
@@ -161,7 +161,7 @@ export default function AllSummary({ state }: Props) {
         </div>
       </Section>
 
-      <Section title="Favorite city">
+      <Section title="Favorite cities">
         <table className="table">
           <thead>
             <tr>

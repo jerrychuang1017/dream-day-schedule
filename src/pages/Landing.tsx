@@ -14,8 +14,8 @@ export default function Landing({ state, onStart }: Props) {
           Project Dream Day
         </div>
         <div className="homeTagline">
-          <div><span className="doubleStrike">Burn out</span></div>
-          <div><span className="doubleStrike">Layoff</span></div>
+          <div><span className="doubleStrike">Burnout</span></div>
+          <div><span className="doubleStrike">Layoffs</span></div>
         </div>
         <div className="hr homeDivider" />
         <div className="homeVision">
