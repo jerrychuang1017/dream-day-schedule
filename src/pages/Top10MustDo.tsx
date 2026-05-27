@@ -62,7 +62,7 @@ export default function Top10MustDo({ state, setState }: Props) {
         <div className="top10HeaderRow">
           <div className="label">Item</div>
           <div className="label">Done</div>
-          <div className="label">Action</div>
+          <div aria-hidden="true" />
         </div>
         {state.top10.map((x, i) => (
           <div key={x.id} className="top10Row">

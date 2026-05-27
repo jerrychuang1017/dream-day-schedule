@@ -61,7 +61,7 @@ export default function Places({ state, setState }: Props) {
               <th className="th">Vibe</th>
               <th className="th">More?</th>
               <th className="th">Notes</th>
-              <th className="th" style={{ textAlign: "right" }}>Action</th>
+              <th className="th" style={{ textAlign: "right" }}></th>
             </tr>
           </thead>
           <tbody>

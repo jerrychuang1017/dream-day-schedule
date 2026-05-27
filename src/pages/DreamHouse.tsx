@@ -28,7 +28,7 @@ function ListEditor({ title, items, onChange }: { title: string; items: string[]
             }}
             placeholder="Gym / sauna / pool…"
           />
-          <button className="smallBtn danger" onClick={() => onChange(items.filter((_, i) => i !== idx))}>Del</button>
+          <button className="smallBtn danger" onClick={() => onChange(items.filter((_, i) => i !== idx))}>Delete</button>
         </div>
       ))}
       <button className="button" onClick={() => onChange([...items, ""])}>+ Add</button>

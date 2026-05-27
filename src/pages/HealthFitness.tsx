@@ -120,7 +120,7 @@ export default function HealthFitness({ state, setState }: Props) {
               <div key={x.id} className="healthLogRow">
                 <input className="input healthDateInput" value={x.date} onChange={(e) => updateDiet(x.id, { date: e.target.value })} />
                 <input className="input" data-diet-log={x.id} value={x.note} onKeyDown={(e) => addOnEnter(e, () => addDietLog(true))} onChange={(e) => updateDiet(x.id, { note: e.target.value })} placeholder="What did you eat?" />
-                <button className="smallBtn danger" onClick={() => setHealth({ dietLogs: h.dietLogs.filter((d) => d.id !== x.id) })}>Del</button>
+                <button className="smallBtn danger" onClick={() => setHealth({ dietLogs: h.dietLogs.filter((d) => d.id !== x.id) })}>Delete</button>
               </div>
             ))}
             <button className="button" onClick={() => addDietLog(true)}>+ Add</button>
@@ -134,7 +134,7 @@ export default function HealthFitness({ state, setState }: Props) {
               <div key={x.id} className="healthLogRow">
                 <input className="input healthDateInput" value={x.date} onChange={(e) => updateWorkout(x.id, { date: e.target.value })} />
                 <input className="input" data-workout-log={x.id} value={x.note} onKeyDown={(e) => addOnEnter(e, () => addWorkoutLog(true))} onChange={(e) => updateWorkout(x.id, { note: e.target.value })} placeholder="Workout / cardio / lift / steps…" />
-                <button className="smallBtn danger" onClick={() => setHealth({ workoutLogs: h.workoutLogs.filter((d) => d.id !== x.id) })}>Del</button>
+                <button className="smallBtn danger" onClick={() => setHealth({ workoutLogs: h.workoutLogs.filter((d) => d.id !== x.id) })}>Delete</button>
               </div>
             ))}
             <button className="button" onClick={() => addWorkoutLog(true)}>+ Add</button>

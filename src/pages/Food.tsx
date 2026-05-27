@@ -50,7 +50,7 @@ export default function Food({ state, setState }: Props) {
               <th className="th">Restaurant</th>
               <th className="th foodCityCol">City</th>
               <th className="th foodMustOrderCol">Must order</th>
-              <th className="th" style={{ textAlign: "right" }}>Action</th>
+              <th className="th" style={{ textAlign: "right" }}></th>
             </tr>
           </thead>
           <tbody>

@@ -59,7 +59,7 @@ export default function PeopleRelationship({ state, setState }: Props) {
               <th className="th">Relationship</th>
               <th className="th">Keep close?</th>
               <th className="th">Notes</th>
-              <th className="th" style={{ textAlign: "right" }}>Action</th>
+              <th className="th" style={{ textAlign: "right" }}></th>
             </tr>
           </thead>
           <tbody>

@@ -103,7 +103,7 @@ function List({
                   onChange={(e) => onUpdate(x.id, { text: e.target.value })}
                   placeholder="Goal…"
                 />
-                <button className="smallBtn danger" onClick={() => onRemove(x.id)}>Del</button>
+                <button className="smallBtn danger" onClick={() => onRemove(x.id)}>Delete</button>
               </div>
             ))}
           </div>

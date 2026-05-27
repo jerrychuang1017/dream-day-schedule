@@ -128,6 +128,13 @@ function defaultDreamHouse(): DreamHousePlan {
   };
 }
 
+function normalizeDreamHouse(house?: Partial<DreamHousePlan>): DreamHousePlan {
+  const next = { ...defaultDreamHouse(), ...(house ?? {}) };
+  if (next.environment === "ocean") next.environment = "";
+  if (next.propertyType === "land_build") next.propertyType = "";
+  return next;
+}
+
 
 function defaultLog(): LogRow {
   const d = new Date();
@@ -229,7 +236,7 @@ function normalizeState(s: any): AppState {
     places: ensureAtLeastOne(s.places || [], placeFactory).map((p: PlaceRow) => ({ ...p, times: Number(p.times ?? 1) })),
     foods: ensureAtLeastOne((s.foods || []).slice(0, 5), foodFactory),
 
-    dreamHouse: s.dreamHouse ?? defaultDreamHouse(),
+    dreamHouse: normalizeDreamHouse(s.dreamHouse),
     finance: s.finance ?? defaultFinance(),
     health: normalizeHealth(s.health),
     updatedAt: s.updatedAt ?? s.completedAt ?? {},
@@ -257,8 +264,8 @@ export function blankState(): AppState {
     dreamHouse: {
       projectName: "",
       location: "",
-      environment: "ocean",
-      propertyType: "land_build",
+      environment: "",
+      propertyType: "",
       budgetTWD: 0,
       landPing: 0,
       indoorPing: 0,
