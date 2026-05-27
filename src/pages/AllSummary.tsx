@@ -27,6 +27,22 @@ export default function AllSummary({ state }: Props) {
   const today = state.schedules[todayKey];
   const name = state.name === "(skip)" ? "" : (state.name || "");
   const title = name ? `${name}'s Project Dream Day` : "Project Dream Day";
+  const cityRankings = [...state.cities]
+    .map((c) => {
+      const vals = (state.cityCriteria || []).map((k) => Number(c.scores[k] ?? 0));
+      const total = vals.reduce((a, b) => a + b, 0);
+      const maxTotal = vals.length * 5;
+      const avg = vals.length ? total / vals.length : 0;
+      return {
+        id: c.id,
+        city: oneLine(c.city) || "—",
+        total,
+        maxTotal,
+        avg,
+        notes: oneLine(c.notes) || "—",
+      };
+    })
+    .sort((a, b) => b.total - a.total);
 
   async function doExport() {
     await exportElementToJpeg({
@@ -127,6 +143,31 @@ export default function AllSummary({ state }: Props) {
         </div>
       </Section>
 
+      <Section title="Favorite city">
+        <table className="table">
+          <thead>
+            <tr>
+              <th className="th">Rank</th>
+              <th className="th">City</th>
+              <th className="th">Total</th>
+              <th className="th">Avg</th>
+              <th className="th">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cityRankings.map((c, i) => (
+              <tr key={c.id}>
+                <td className="td">{i + 1}</td>
+                <td className="td">{c.city}</td>
+                <td className="td">{c.total} / {c.maxTotal}</td>
+                <td className="td">{c.avg.toFixed(1)}</td>
+                <td className="td">{c.notes}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Section>
+
       <Section title="Places">
         <table className="table">
           <thead>
@@ -140,6 +181,27 @@ export default function AllSummary({ state }: Props) {
                 <td className="td">{p.vibe}</td>
                 <td className="td">{p.wantMore ? "Yes" : "No"}</td>
                 <td className="td">{oneLine(p.notes) || "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Section>
+
+      <Section title="Top 5 restaurants">
+        <table className="table">
+          <thead>
+            <tr>
+              <th className="th">Restaurant</th>
+              <th className="th">City</th>
+              <th className="th">Must order</th>
+            </tr>
+          </thead>
+          <tbody>
+            {state.foods.map((r) => (
+              <tr key={r.id}>
+                <td className="td">{oneLine(r.restaurant) || "—"}</td>
+                <td className="td">{oneLine(r.city) || "—"}</td>
+                <td className="td">{oneLine(r.mustOrder) || "—"}</td>
               </tr>
             ))}
           </tbody>
